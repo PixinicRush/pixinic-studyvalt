@@ -1,0 +1,2070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixinic StudyValt — Personal Study Hub</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Newsreader for academic elegance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Marked.js for clean Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Newsreader', 'serif'],
+                    },
+                    colors: {
+                        cream: '#FAF9F6',
+                        slatebg: '#F4F5F7',
+                        indigoAccent: '#3730A3',
+                        emeraldAccent: '#059669',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Scrollbar for calm academic feel */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+
+        /* Markdown Reader Styling */
+        .prose-academic h1 { font-family: 'Newsreader', serif; font-size: 1.875rem; font-weight: 600; color: #0F172A; margin-bottom: 0.75rem; margin-top: 1.5rem; }
+        .prose-academic h2 { font-family: 'Newsreader', serif; font-size: 1.4rem; font-weight: 600; color: #1E293B; margin-bottom: 0.5rem; margin-top: 1.25rem; }
+        .prose-academic h3 { font-size: 1.1rem; font-weight: 600; color: #334155; margin-bottom: 0.4rem; margin-top: 1rem; }
+        .prose-academic p { font-size: 1rem; line-height: 1.75; color: #334155; margin-bottom: 1rem; }
+        .prose-academic ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; color: #334155; }
+        .prose-academic ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 1rem; color: #334155; }
+        .prose-academic li { margin-bottom: 0.35rem; line-height: 1.65; }
+        .prose-academic blockquote { border-left: 3px solid #4F46E5; padding-left: 1rem; font-style: italic; color: #475569; background: #EEF2FF; padding-top: 0.5rem; padding-bottom: 0.5rem; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 1rem; }
+        .prose-academic code { background: #F1F5F9; color: #BE185D; padding: 0.15rem 0.4rem; border-radius: 0.35rem; font-size: 0.875rem; }
+        .prose-academic pre { background: #0F172A; color: #F8FAFC; padding: 1rem; border-radius: 0.75rem; overflow-x: auto; margin-bottom: 1rem; }
+        .prose-academic pre code { background: transparent; color: inherit; padding: 0; }
+
+        /* Equalizer Animation for Audio Player */
+        @keyframes eqBar {
+            0%, 100% { height: 20%; }
+            50% { height: 95%; }
+        }
+        .eq-playing .eq-bar-1 { animation: eqBar 0.7s ease-in-out infinite; }
+        .eq-playing .eq-bar-2 { animation: eqBar 0.5s ease-in-out infinite 0.15s; }
+        .eq-playing .eq-bar-3 { animation: eqBar 0.8s ease-in-out infinite 0.3s; }
+        .eq-playing .eq-bar-4 { animation: eqBar 0.6s ease-in-out infinite 0.1s; }
+        .eq-playing .eq-bar-5 { animation: eqBar 0.75s ease-in-out infinite 0.25s; }
+    </style>
+</head>
+<body class="bg-cream text-slate-800 font-sans antialiased selection:bg-indigo-100 selection:text-indigo-900 overflow-x-hidden">
+
+    <!-- Toast Notification Container (Replaces alert) -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-[100] flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Main App Shell -->
+    <div class="min-h-screen flex flex-col lg:flex-row">
+
+        <!-- Mobile Header -->
+        <header class="lg:hidden bg-white border-b border-slate-200/80 px-4 py-3 flex items-center justify-between sticky top-0 z-30">
+            <div class="flex items-center gap-2.5">
+                <button id="mobile-menu-btn" class="p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-xl bg-indigo-700 flex items-center justify-center text-white shadow-sm">
+                        <i data-lucide="book-open" class="w-4 h-4"></i>
+                    </div>
+                    <span class="font-serif font-semibold text-lg sm:text-xl tracking-tight text-slate-900">Pixinic StudyValt</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <button onclick="requireAdminAuth(() => openCreateSubjectModal())" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold px-2.5 py-2 rounded-xl flex items-center gap-1 transition" title="Create Subject Tab">
+                    <i data-lucide="folder-plus" class="w-3.5 h-3.5 text-indigo-700"></i>
+                    <span class="hidden sm:inline">Create Tab</span>
+                </button>
+                <button onclick="requireAdminAuth(() => openUploadModal())" class="bg-indigo-700 hover:bg-indigo-800 text-white text-xs sm:text-sm font-medium px-3 py-2 rounded-xl flex items-center gap-1.5 shadow-sm transition">
+                    <i data-lucide="lock" class="w-3.5 h-3.5 mobile-lock-icon"></i>
+                    <span>Upload</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Sidebar Backdrop for Mobile -->
+        <div id="sidebar-backdrop" class="fixed inset-0 bg-slate-900/30 backdrop-blur-xs z-30 hidden lg:hidden" onclick="toggleMobileSidebar(false)"></div>
+
+        <!-- Left Sidebar (Subjects & Categories) -->
+        <aside id="sidebar" class="fixed lg:sticky top-0 left-0 z-40 h-screen w-72 bg-white border-r border-slate-200/80 flex flex-col justify-between transition-transform duration-300 -translate-x-full lg:translate-x-0 shrink-0">
+            <div class="p-5 overflow-y-auto flex-1">
+                <!-- Brand Logo -->
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-700 to-indigo-900 flex items-center justify-center text-white shadow-md shadow-indigo-200">
+                            <i data-lucide="library" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h1 class="font-serif font-semibold text-lg leading-tight text-slate-900">Pixinic StudyValt</h1>
+                            <p class="text-[10px] font-semibold text-indigo-600 tracking-wider uppercase mt-0.5">Personal Study Space</p>
+                        </div>
+                    </div>
+                    <button onclick="toggleMobileSidebar(false)" class="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-600">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <!-- Admin Lock Status Pill -->
+                <div id="admin-status-banner" class="mb-4 px-3 py-2 rounded-xl bg-slate-100 border border-slate-200/80 flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-2 text-slate-600 font-medium">
+                        <i data-lucide="lock" id="admin-status-icon" class="w-3.5 h-3.5 text-amber-600"></i>
+                        <span id="admin-status-text">Upload Locked</span>
+                    </div>
+                    <button id="admin-status-action" onclick="requireAdminAuth(() => {})" class="text-[11px] font-semibold text-indigo-700 hover:underline">
+                        Unlock
+                    </button>
+                </div>
+
+                <!-- Primary Protected Actions -->
+                <div class="space-y-2 mb-6">
+                    <button onclick="requireAdminAuth(() => openUploadModal())" class="w-full bg-indigo-700 hover:bg-indigo-800 active:scale-[0.99] text-white font-medium py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-sm shadow-indigo-200 transition-all text-sm">
+                        <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+                        <span>Upload Material</span>
+                        <i data-lucide="lock" class="w-3 h-3 opacity-80 admin-btn-lock"></i>
+                    </button>
+
+                    <button onclick="requireAdminAuth(() => openCreateSubjectModal())" class="w-full bg-white hover:bg-indigo-50/70 text-indigo-900 border border-indigo-200 font-semibold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all text-sm">
+                        <i data-lucide="folder-plus" class="w-4 h-4 text-indigo-700"></i>
+                        <span>+ Create Tab</span>
+                        <i data-lucide="lock" class="w-3 h-3 text-indigo-400 admin-btn-lock"></i>
+                    </button>
+                </div>
+
+                <!-- Library Overview -->
+                <div class="mb-6">
+                    <p class="px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">Workspace</p>
+                    <nav class="space-y-1" id="library-nav">
+                        <button onclick="selectSubject('All')" data-subject="All" class="subject-nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition bg-indigo-50 text-indigo-800">
+                            <span class="flex items-center gap-2.5">
+                                <i data-lucide="layers" class="w-4 h-4 text-indigo-600"></i>
+                                All Subjects
+                            </span>
+                            <span id="count-all" class="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700">0</span>
+                        </button>
+                        <button onclick="selectSubject('Favorites')" data-subject="Favorites" class="subject-nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition">
+                            <span class="flex items-center gap-2.5">
+                                <i data-lucide="bookmark" class="w-4 h-4 text-amber-500"></i>
+                                Bookmarked
+                            </span>
+                            <span id="count-fav" class="text-xs font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">0</span>
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Subject Tabs -->
+                <div>
+                    <div class="flex items-center justify-between px-3 mb-2">
+                        <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Subject Tabs</p>
+                        <button onclick="requireAdminAuth(() => openCreateSubjectModal())" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition" title="Create New Subject Tab">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                            <span>Create Tab</span>
+                        </button>
+                    </div>
+
+                    <nav class="space-y-1" id="subjects-list">
+                        <!-- Dynamically populated -->
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Storage & Session Info Footer -->
+            <div class="p-4 border-t border-slate-100 bg-slate-50/70">
+                <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
+                    <span class="font-medium text-slate-700">Vault Summary</span>
+                    <span id="total-items-badge" class="text-emerald-700 font-semibold">6 Items</span>
+                </div>
+                <div class="grid grid-cols-3 gap-1.5 text-center">
+                    <div class="bg-white border border-slate-200/70 rounded-lg py-1.5 px-1">
+                        <div id="stat-notes" class="text-xs font-bold text-indigo-700">0</div>
+                        <div class="text-[10px] text-slate-400">Notes</div>
+                    </div>
+                    <div class="bg-white border border-slate-200/70 rounded-lg py-1.5 px-1">
+                        <div id="stat-videos" class="text-xs font-bold text-emerald-700">0</div>
+                        <div class="text-[10px] text-slate-400">Videos</div>
+                    </div>
+                    <div class="bg-white border border-slate-200/70 rounded-lg py-1.5 px-1">
+                        <div id="stat-audio" class="text-xs font-bold text-amber-700">0</div>
+                        <div class="text-[10px] text-slate-400">Audio</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace Content -->
+        <main class="flex-1 flex flex-col min-w-0">
+            <!-- Top Search & Subject Space Banner -->
+            <div class="bg-cream/95 backdrop-blur-md border-b border-slate-200/70 sticky top-0 z-20 px-4 sm:px-8 pt-4 pb-0">
+                <div class="max-w-7xl mx-auto">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4">
+                        <!-- Current View Heading -->
+                        <div>
+                            <div class="flex flex-wrap items-center gap-2.5">
+                                <span id="subject-space-badge" class="hidden px-2.5 py-0.5 rounded-lg text-[11px] font-bold uppercase tracking-wider bg-indigo-100 text-indigo-800">Subject Space</span>
+                                <h2 id="current-view-title" class="font-serif text-2xl sm:text-3xl font-semibold text-slate-900">Pixinic StudyValt — All Subjects</h2>
+                                <span id="filtered-count-pill" class="text-xs font-semibold bg-slate-200/80 text-slate-700 px-2.5 py-0.5 rounded-full">0</span>
+                            </div>
+                            <p id="current-view-subtitle" class="text-xs text-slate-500 mt-1">Browse notes, lecture videos, and audio recordings across all your subjects.</p>
+                        </div>
+
+                        <!-- Search Input & Quick Subject Upload -->
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                            <div class="relative flex-1 sm:w-64">
+                                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                                <input type="text" id="search-input" oninput="handleSearch(this.value)" placeholder="Search title, tags, notes..." class="w-full bg-white border border-slate-200/90 rounded-xl pl-9 pr-4 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition">
+                            </div>
+                            <button onclick="requireAdminAuth(() => openUploadModal())" class="bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-semibold px-3.5 py-2.5 rounded-xl flex items-center justify-center gap-1.5 shadow-2xs transition shrink-0">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
+                                <span id="quick-upload-btn-label">Upload to Vault</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Three Dedicated Subject Space Options: Notes, Video, Audio (Plus All) -->
+                    <div class="flex items-center justify-between gap-2 overflow-x-auto pt-1">
+                        <div class="flex items-center gap-1.5 sm:gap-2" id="subject-media-tabs">
+                            <button onclick="setTypeFilter('note')" data-type="note" class="type-filter-btn group px-4 py-2.5 rounded-t-xl border-b-2 border-transparent text-xs sm:text-sm font-medium text-slate-600 hover:text-indigo-700 hover:bg-white/60 transition flex items-center gap-2 shrink-0">
+                                <i data-lucide="file-text" class="w-4 h-4 text-indigo-600"></i>
+                                <span>Notes</span>
+                                <span id="tab-count-note" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700">0</span>
+                            </button>
+
+                            <button onclick="setTypeFilter('video')" data-type="video" class="type-filter-btn group px-4 py-2.5 rounded-t-xl border-b-2 border-transparent text-xs sm:text-sm font-medium text-slate-600 hover:text-emerald-700 hover:bg-white/60 transition flex items-center gap-2 shrink-0">
+                                <i data-lucide="video" class="w-4 h-4 text-emerald-600"></i>
+                                <span>Video</span>
+                                <span id="tab-count-video" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">0</span>
+                            </button>
+
+                            <button onclick="setTypeFilter('audio')" data-type="audio" class="type-filter-btn group px-4 py-2.5 rounded-t-xl border-b-2 border-transparent text-xs sm:text-sm font-medium text-slate-600 hover:text-amber-700 hover:bg-white/60 transition flex items-center gap-2 shrink-0">
+                                <i data-lucide="headphones" class="w-4 h-4 text-amber-600"></i>
+                                <span>Audio</span>
+                                <span id="tab-count-audio" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">0</span>
+                            </button>
+
+                            <button onclick="setTypeFilter('all')" data-type="all" class="type-filter-btn px-4 py-2.5 rounded-t-xl border-b-2 border-indigo-700 bg-white text-indigo-900 text-xs sm:text-sm font-semibold transition flex items-center gap-2 shrink-0">
+                                <i data-lucide="layout-grid" class="w-4 h-4 text-slate-500"></i>
+                                <span>All Formats</span>
+                                <span id="tab-count-all" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">0</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cards Grid Container -->
+            <div class="flex-1 px-4 sm:px-8 py-6 max-w-7xl w-full mx-auto">
+                <div id="materials-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                    <!-- Study cards injected here -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="hidden flex-col items-center justify-center py-20 text-center">
+                    <div class="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4">
+                        <i data-lucide="folder-search" class="w-8 h-8"></i>
+                    </div>
+                    <h3 id="empty-state-title" class="font-serif text-xl font-semibold text-slate-900 mb-1">No study materials in this section yet</h3>
+                    <p id="empty-state-desc" class="text-sm text-slate-500 max-w-md mb-5">Upload your notes, lecture videos, or audio recordings directly into this subject tab.</p>
+                    <button onclick="requireAdminAuth(() => openUploadModal())" class="bg-indigo-700 hover:bg-indigo-800 text-white text-sm font-medium px-4 py-2.5 rounded-xl inline-flex items-center gap-2 transition">
+                        <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+                        Upload Study Material
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL 0: ADMIN PASSWORD PROTECTION MODAL ("JENIL")                    -->
+    <!-- ===================================================================== -->
+    <div id="password-modal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
+        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden">
+            <div class="px-6 py-4 bg-cream border-b border-slate-100 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center">
+                        <i data-lucide="shield-check" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-serif font-semibold text-lg text-slate-900">Creator Verification</h3>
+                        <p class="text-xs text-slate-500">Pixinic StudyValt Admin Access</p>
+                    </div>
+                </div>
+                <button onclick="closePasswordModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handlePasswordSubmit(event)" class="p-6 space-y-4">
+                <p class="text-xs text-slate-600 leading-relaxed">
+                    Only the creator can create new subject tabs, upload study materials, or delete items. Enter your creator password to continue.
+                </p>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Creator Password</label>
+                    <div class="relative">
+                        <input type="password" id="admin-password-input" required placeholder="Enter password..." class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500/15">
+                    </div>
+                    <p id="password-error-msg" class="hidden text-xs font-medium text-rose-600 mt-1.5 flex items-center gap-1">
+                        <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i>
+                        <span>Incorrect password. Please try again.</span>
+                    </p>
+                </div>
+
+                <label class="flex items-center gap-2 cursor-pointer select-none">
+                    <input type="checkbox" id="remember-session-checkbox" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                    <span class="text-xs text-slate-600">Keep unlocked for this browser session</span>
+                </label>
+
+                <div class="pt-2 flex items-center justify-end gap-2.5">
+                    <button type="button" onclick="closePasswordModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-semibold bg-indigo-700 hover:bg-indigo-800 text-white shadow-sm transition flex items-center gap-1.5">
+                        <i data-lucide="unlock" class="w-3.5 h-3.5"></i>
+                        Verify & Continue
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL 0B: CREATE NEW SUBJECT TAB MODAL                                -->
+    <!-- ===================================================================== -->
+    <div id="create-subject-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
+        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden">
+            <div class="px-6 py-4 bg-cream border-b border-slate-100 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center">
+                        <i data-lucide="folder-plus" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-serif font-semibold text-lg text-slate-900">Create Subject Tab</h3>
+                        <p class="text-xs text-slate-500">Dedicated space with Notes, Video & Audio sections</p>
+                    </div>
+                </div>
+                <button onclick="closeCreateSubjectModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleCreateSubjectSubmit(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Subject Name *</label>
+                    <input type="text" id="create-subject-name" required placeholder="e.g., Physics, Organic Chemistry, Economics" class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Subject Description <span class="text-slate-400 font-normal">(optional)</span></label>
+                    <input type="text" id="create-subject-desc" placeholder="e.g., Semester 4 lectures, lab notes & audio summaries" class="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-2">Tab Accent Color</label>
+                    <div class="flex items-center gap-2.5" id="subject-color-picker">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="subjectColor" value="bg-indigo-500" checked class="sr-only peer">
+                            <span class="w-7 h-7 rounded-full bg-indigo-500 block ring-offset-2 peer-checked:ring-2 peer-checked:ring-indigo-600 transition"></span>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="subjectColor" value="bg-emerald-500" class="sr-only peer">
+                            <span class="w-7 h-7 rounded-full bg-emerald-500 block ring-offset-2 peer-checked:ring-2 peer-checked:ring-emerald-600 transition"></span>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="subjectColor" value="bg-amber-500" class="sr-only peer">
+                            <span class="w-7 h-7 rounded-full bg-amber-500 block ring-offset-2 peer-checked:ring-2 peer-checked:ring-amber-600 transition"></span>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="subjectColor" value="bg-rose-500" class="sr-only peer">
+                            <span class="w-7 h-7 rounded-full bg-rose-500 block ring-offset-2 peer-checked:ring-2 peer-checked:ring-rose-600 transition"></span>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="subjectColor" value="bg-purple-500" class="sr-only peer">
+                            <span class="w-7 h-7 rounded-full bg-purple-500 block ring-offset-2 peer-checked:ring-2 peer-checked:ring-purple-600 transition"></span>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="subjectColor" value="bg-cyan-600" class="sr-only peer">
+                            <span class="w-7 h-7 rounded-full bg-cyan-600 block ring-offset-2 peer-checked:ring-2 peer-checked:ring-cyan-600 transition"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
+                    <button type="button" onclick="closeCreateSubjectModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-semibold bg-indigo-700 hover:bg-indigo-800 text-white shadow-sm transition flex items-center gap-1.5">
+                        <i data-lucide="folder-plus" class="w-3.5 h-3.5"></i>
+                        Create Subject Tab
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL 1: GUIDED UPLOAD / CREATE STUDY MATERIAL                        -->
+    <!-- ===================================================================== -->
+    <div id="upload-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
+        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-2xl max-h-[92vh] flex flex-col overflow-hidden">
+            <!-- Header -->
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-cream">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center">
+                        <i data-lucide="file-plus-2" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-serif font-semibold text-lg text-slate-900">Upload to Pixinic StudyValt</h3>
+                        <p class="text-xs text-slate-500">Choose your Subject Tab and format (Notes, Video, or Audio)</p>
+                    </div>
+                </div>
+                <button onclick="closeUploadModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Form Body -->
+            <form id="upload-form" onsubmit="handleUploadSubmit(event)" class="p-6 overflow-y-auto space-y-5 flex-1">
+                
+                <!-- STEP 1: Choose Which Subject Tab -->
+                <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-indigo-800 mb-2">
+                        Step 1: Which Subject Tab do you want to upload into? *
+                    </label>
+                    <div class="flex gap-2">
+                        <select id="upload-subject" required class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm font-medium bg-white text-slate-900 focus:outline-none focus:border-indigo-500">
+                            <!-- Populated dynamically -->
+                        </select>
+                        <button type="button" onclick="promptInlineSubjectInModal()" title="Create new subject tab inline" class="px-3.5 rounded-xl border border-slate-300 bg-white hover:bg-indigo-50 text-indigo-700 font-semibold text-xs flex items-center gap-1 shrink-0 transition">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            <span>New Tab</span>
+                        </button>
+                    </div>
+                    <input type="text" id="upload-new-subject" placeholder="Type new subject tab name..." class="hidden mt-2.5 w-full rounded-xl border border-indigo-300 bg-white px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <!-- STEP 2: Choose Which of the Three Options (Notes, Video, Audio) -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-indigo-800 mb-2">
+                        Step 2: Which option do you want to upload? *
+                    </label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="materialType" value="note" checked onchange="switchUploadType('note')" class="peer sr-only">
+                            <div class="p-3.5 rounded-xl border-2 border-slate-200 peer-checked:border-indigo-600 peer-checked:bg-indigo-50/70 hover:bg-slate-50 transition flex flex-col items-center gap-1.5 text-center">
+                                <div class="w-9 h-9 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center">
+                                    <i data-lucide="file-text" class="w-5 h-5"></i>
+                                </div>
+                                <span class="text-xs sm:text-sm font-bold text-slate-900">Notes</span>
+                                <span class="text-[10px] text-slate-500">Markdown, TXT, PDF</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="materialType" value="video" onchange="switchUploadType('video')" class="peer sr-only">
+                            <div class="p-3.5 rounded-xl border-2 border-slate-200 peer-checked:border-emerald-600 peer-checked:bg-emerald-50/70 hover:bg-slate-50 transition flex flex-col items-center gap-1.5 text-center">
+                                <div class="w-9 h-9 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                                    <i data-lucide="video" class="w-5 h-5"></i>
+                                </div>
+                                <span class="text-xs sm:text-sm font-bold text-slate-900">Video</span>
+                                <span class="text-[10px] text-slate-500">MP4, WebM or Link</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="materialType" value="audio" onchange="switchUploadType('audio')" class="peer sr-only">
+                            <div class="p-3.5 rounded-xl border-2 border-slate-200 peer-checked:border-amber-600 peer-checked:bg-amber-50/70 hover:bg-slate-50 transition flex flex-col items-center gap-1.5 text-center">
+                                <div class="w-9 h-9 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center">
+                                    <i data-lucide="headphones" class="w-5 h-5"></i>
+                                </div>
+                                <span class="text-xs sm:text-sm font-bold text-slate-900">Audio</span>
+                                <span class="text-[10px] text-slate-500">MP3, WAV or Record</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Title & Tags Row -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Study Title *</label>
+                        <input type="text" id="upload-title" required placeholder="e.g., Chapter 4 Lecture Notes" class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Tags <span class="text-slate-400 font-normal">(comma separated)</span></label>
+                        <input type="text" id="upload-tags" placeholder="e.g., exam-prep, lecture-1, revision" class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+
+                <!-- OPTION A: NOTE INPUT SECTION -->
+                <div id="note-input-section" class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <label class="text-xs font-semibold text-slate-700">Note Content (Markdown Supported)</label>
+                        <label class="cursor-pointer text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 bg-indigo-50 px-2.5 py-1 rounded-lg">
+                            <i data-lucide="file-up" class="w-3.5 h-3.5"></i>
+                            <span>Import .txt / .md / .pdf</span>
+                            <input type="file" id="note-file-input" accept=".txt,.md,.markdown,.pdf" onchange="handleNoteFileSelect(event)" class="hidden">
+                        </label>
+                    </div>
+                    <div id="note-file-badge" class="hidden items-center justify-between bg-indigo-50 border border-indigo-200 rounded-xl px-3.5 py-2 text-xs text-indigo-800">
+                        <span id="note-file-name" class="font-medium truncate">document.pdf</span>
+                        <button type="button" onclick="clearNoteFile()" class="text-indigo-600 hover:text-indigo-900 font-semibold ml-2">Remove</button>
+                    </div>
+                    <textarea id="upload-note-content" rows="5" placeholder="# Key Concepts&#10;&#10;Write or paste your study notes here..." class="w-full rounded-xl border border-slate-200 p-3.5 text-sm font-mono focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"></textarea>
+                </div>
+
+                <!-- OPTION B & C: VIDEO / AUDIO INPUT SECTION -->
+                <div id="media-file-section" class="hidden space-y-3">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-semibold text-slate-700" id="media-file-label">Upload Video File *</label>
+                        <!-- Browser Voice Recorder Toggle (Visible only for Audio) -->
+                        <button type="button" id="toggle-recorder-btn" onclick="toggleAudioRecorderBox()" class="hidden text-xs font-semibold text-amber-800 bg-amber-100 hover:bg-amber-200 px-2.5 py-1 rounded-lg items-center gap-1.5 transition">
+                            <i data-lucide="mic" class="w-3.5 h-3.5"></i>
+                            <span>Record Voice Note</span>
+                        </button>
+                    </div>
+
+                    <!-- Inline Browser Audio Recorder (Optional for Audio) -->
+                    <div id="inline-audio-recorder" class="hidden bg-amber-50/80 border border-amber-200 rounded-2xl p-4 space-y-2.5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-amber-900 flex items-center gap-1.5">
+                                <span id="rec-dot" class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+                                <span id="rec-status-text">Ready to record microphone audio</span>
+                            </span>
+                            <span id="rec-timer" class="text-xs font-mono font-bold text-amber-900">00:00</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" id="btn-start-rec" onclick="startBrowserRecording()" class="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold flex items-center gap-1.5 transition">
+                                <i data-lucide="circle" class="w-3 h-3 fill-current"></i>
+                                Start Recording
+                            </button>
+                            <button type="button" id="btn-stop-rec" onclick="stopBrowserRecording()" disabled class="px-3 py-1.5 rounded-xl bg-slate-800 disabled:opacity-40 text-white text-xs font-semibold flex items-center gap-1.5 transition">
+                                <i data-lucide="square" class="w-3 h-3 fill-current"></i>
+                                Stop & Attach
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Local File Dropzone -->
+                    <div class="border-2 border-dashed border-slate-300 hover:border-indigo-500 rounded-2xl p-5 text-center bg-slate-50/60 transition cursor-pointer relative" onclick="document.getElementById('media-file-input').click()">
+                        <input type="file" id="media-file-input" accept="video/*" onchange="handleMediaFileSelect(event)" class="hidden">
+                        <div id="media-dropzone-placeholder">
+                            <div class="w-10 h-10 rounded-full bg-white shadow-xs border border-slate-200 flex items-center justify-center mx-auto mb-2 text-indigo-600">
+                                <i data-lucide="upload" class="w-5 h-5"></i>
+                            </div>
+                            <p class="text-sm font-medium text-slate-800">Click to select a file from your device</p>
+                            <p id="media-format-hint" class="text-xs text-slate-400 mt-1">Supports MP4, WebM, MOV</p>
+                        </div>
+                        <div id="media-file-selected" class="hidden items-center justify-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                                <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+                            </div>
+                            <div class="text-left min-w-0">
+                                <p id="selected-media-name" class="text-sm font-semibold text-slate-900 truncate max-w-xs">lecture.mp4</p>
+                                <p id="selected-media-size" class="text-xs text-slate-500">Ready for playback</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Optional External Video URL input (Visible for Video) -->
+                    <div id="video-url-fallback-box">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Or paste direct Video URL <span class="text-slate-400 font-normal">(optional .mp4/.webm link)</span></label>
+                        <input type="url" id="upload-video-url" placeholder="https://example.com/lecture.mp4" class="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Summary / Description</label>
+                        <input type="text" id="upload-media-desc" placeholder="Brief summary of topics covered..." class="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+
+                <!-- Modal Actions -->
+                <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">
+                    <button type="button" onclick="closeUploadModal()" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-indigo-700 hover:bg-indigo-800 text-white shadow-sm transition flex items-center gap-2">
+                        <i data-lucide="check" class="w-4 h-4"></i>
+                        Save to Pixinic StudyValt
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- MODAL 2: SPLIT-PANE STUDY VIEWER & REVISION SCRATCHPAD                -->
+    <!-- ===================================================================== -->
+    <div id="viewer-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs p-0 sm:p-4 lg:p-6 flex items-center justify-center">
+        <div class="bg-white w-full h-full sm:rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden max-w-7xl">
+            
+            <!-- Top Workspace Header -->
+            <div class="px-4 sm:px-6 py-3.5 bg-cream border-b border-slate-200 flex items-center justify-between gap-4 shrink-0">
+                <div class="flex items-center gap-3 min-w-0">
+                    <span id="viewer-type-badge" class="px-2.5 py-1 rounded-lg text-xs font-semibold uppercase tracking-wide shrink-0">NOTE</span>
+                    <div class="min-w-0">
+                        <h3 id="viewer-title" class="font-serif font-semibold text-lg sm:text-xl text-slate-900 truncate">Study Item Title</h3>
+                        <div class="flex items-center gap-2 text-xs text-slate-500">
+                            <span id="viewer-subject" class="font-medium text-indigo-700">Computer Science</span>
+                            <span>•</span>
+                            <span id="viewer-meta">5 min read</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 shrink-0">
+                    <button id="viewer-fav-btn" onclick="toggleCurrentItemFavorite()" class="p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 transition" title="Bookmark">
+                        <i data-lucide="bookmark" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="requireAdminAuth(() => deleteCurrentItem())" class="p-2 rounded-xl border border-slate-200 bg-white hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-slate-500 transition" title="Delete Item (Password Protected)">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="closeViewerModal()" class="ml-1 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center gap-1.5 transition">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                        <span>Close</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Split-Pane Body -->
+            <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+                
+                <!-- LEFT PANE: Primary Content (Reader / Video Player / Audio Deck) -->
+                <div class="flex-1 overflow-y-auto bg-white p-5 sm:p-8 flex flex-col" id="viewer-main-pane">
+                    
+                    <!-- 1. NOTE VIEWER & EDITOR -->
+                    <div id="viewer-note-container" class="hidden flex-1 flex flex-col max-w-3xl mx-auto w-full">
+                        <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                            <div class="flex items-center gap-2 bg-slate-100 p-1 rounded-xl">
+                                <button id="btn-mode-read" onclick="setNoteMode('read')" class="px-3 py-1 rounded-lg text-xs font-semibold bg-white text-slate-900 shadow-xs transition">Reader View</button>
+                                <button id="btn-mode-edit" onclick="setNoteMode('edit')" class="px-3 py-1 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 transition">Edit Markdown</button>
+                            </div>
+                            <span id="note-word-count" class="text-xs text-slate-400 font-medium">0 words</span>
+                        </div>
+
+                        <!-- Rendered Markdown View -->
+                        <div id="note-rendered-view" class="prose-academic flex-1"></div>
+
+                        <!-- PDF Embed View (If PDF was uploaded) -->
+                        <div id="note-pdf-view" class="hidden flex-1 flex-col min-h-[450px]">
+                            <iframe id="pdf-iframe" class="w-full flex-1 rounded-xl border border-slate-200" src=""></iframe>
+                        </div>
+
+                        <!-- Raw Markdown Editor -->
+                        <div id="note-editor-view" class="hidden flex-1 flex flex-col gap-3">
+                            <textarea id="note-edit-textarea" class="w-full flex-1 min-h-[350px] p-4 rounded-xl border border-slate-200 font-mono text-sm leading-relaxed focus:outline-none focus:border-indigo-500"></textarea>
+                            <div class="flex justify-end">
+                                <button onclick="saveEditedNote()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-xl transition flex items-center gap-1.5">
+                                    <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                                    Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. VIDEO PLAYER VIEWER -->
+                    <div id="viewer-video-container" class="hidden flex-1 flex flex-col justify-center max-w-4xl mx-auto w-full">
+                        <div class="bg-slate-950 rounded-2xl overflow-hidden shadow-xl border border-slate-800 relative">
+                            <video id="study-video-player" controls class="w-full max-h-[55vh] mx-auto bg-black" playsinline>
+                                Your browser does not support HTML5 video.
+                            </video>
+                        </div>
+                        <div class="mt-4 flex flex-wrap items-center justify-between gap-3 bg-slate-50 border border-slate-200/80 rounded-xl p-3.5">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-semibold text-slate-600">Playback Speed:</span>
+                                <div class="inline-flex gap-1" id="video-speed-controls">
+                                    <button onclick="setMediaSpeed(1, 'video')" data-speed="1" class="v-speed-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-600 text-white">1x</button>
+                                    <button onclick="setMediaSpeed(1.25, 'video')" data-speed="1.25" class="v-speed-btn px-2.5 py-1 rounded-lg text-xs font-medium bg-white border border-slate-200 text-slate-700 hover:bg-slate-100">1.25x</button>
+                                    <button onclick="setMediaSpeed(1.5, 'video')" data-speed="1.5" class="v-speed-btn px-2.5 py-1 rounded-lg text-xs font-medium bg-white border border-slate-200 text-slate-700 hover:bg-slate-100">1.5x</button>
+                                    <button onclick="setMediaSpeed(2, 'video')" data-speed="2" class="v-speed-btn px-2.5 py-1 rounded-lg text-xs font-medium bg-white border border-slate-200 text-slate-700 hover:bg-slate-100">2x</button>
+                                </div>
+                            </div>
+                            <button onclick="insertTimestampToScratchpad()" class="text-xs font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition">
+                                <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                                <span>Pin Current Timestamp</span>
+                            </button>
+                        </div>
+                        <p id="viewer-video-desc" class="mt-4 text-sm text-slate-600 leading-relaxed"></p>
+                    </div>
+
+                    <!-- 3. AUDIO LECTURE STUDIO PLAYER -->
+                    <div id="viewer-audio-container" class="hidden flex-1 flex flex-col justify-center max-w-2xl mx-auto w-full">
+                        <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-indigo-900/50">
+                            <!-- Equalizer Visual & Header -->
+                            <div class="flex items-center justify-between mb-6">
+                                <span class="px-3 py-1 rounded-full bg-white/10 text-indigo-200 text-xs font-medium flex items-center gap-1.5">
+                                    <i data-lucide="headphones" class="w-3.5 h-3.5"></i>
+                                    Audio Lecture Deck
+                                </span>
+                                <!-- Animated Equalizer Bars -->
+                                <div id="audio-equalizer" class="flex items-end gap-1 h-6">
+                                    <span class="eq-bar-1 w-1 bg-emerald-400 rounded-full h-2"></span>
+                                    <span class="eq-bar-2 w-1 bg-indigo-400 rounded-full h-4"></span>
+                                    <span class="eq-bar-3 w-1 bg-emerald-400 rounded-full h-3"></span>
+                                    <span class="eq-bar-4 w-1 bg-amber-400 rounded-full h-5"></span>
+                                    <span class="eq-bar-5 w-1 bg-indigo-400 rounded-full h-2"></span>
+                                </div>
+                            </div>
+
+                            <h4 id="audio-deck-title" class="font-serif text-2xl font-semibold text-white mb-1">Lecture Recording</h4>
+                            <p id="audio-deck-subtitle" class="text-xs text-indigo-200/80 mb-6">Subject • Recorded Study Session</p>
+
+                            <!-- Hidden Native Audio Element -->
+                            <audio id="study-audio-player" preload="metadata"></audio>
+
+                            <!-- Custom Scrubber -->
+                            <div class="mb-5">
+                                <input type="range" id="audio-seek-slider" min="0" max="100" value="0" oninput="seekAudio(this.value)" class="w-full accent-emerald-400 h-1.5 bg-white/20 rounded-lg cursor-pointer">
+                                <div class="flex justify-between text-[11px] font-mono text-indigo-200 mt-1.5">
+                                    <span id="audio-current-time">00:00</span>
+                                    <span id="audio-total-duration">00:00</span>
+                                </div>
+                            </div>
+
+                            <!-- Transport & Speed Controls -->
+                            <div class="flex flex-wrap items-center justify-between gap-4 pt-2 border-t border-white/10">
+                                <div class="flex items-center gap-3">
+                                    <button onclick="skipAudio(-10)" class="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition" title="Rewind 10s">
+                                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                                    </button>
+                                    <button id="audio-play-pause-btn" onclick="toggleAudioPlay()" class="w-12 h-12 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 flex items-center justify-center shadow-lg shadow-emerald-950/50 transition">
+                                        <i data-lucide="play" id="audio-play-icon" class="w-5 h-5 fill-current ml-0.5"></i>
+                                    </button>
+                                    <button onclick="skipAudio(15)" class="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition" title="Forward 15s">
+                                        <i data-lucide="rotate-cw" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+
+                                <!-- Speed Pills -->
+                                <div class="flex items-center gap-1 bg-white/10 p-1 rounded-xl" id="audio-speed-controls">
+                                    <button onclick="setMediaSpeed(1, 'audio')" data-speed="1" class="a-speed-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-white text-slate-900">1x</button>
+                                    <button onclick="setMediaSpeed(1.25, 'audio')" data-speed="1.25" class="a-speed-btn px-2.5 py-1 rounded-lg text-xs font-medium text-indigo-100 hover:bg-white/10">1.25x</button>
+                                    <button onclick="setMediaSpeed(1.5, 'audio')" data-speed="1.5" class="a-speed-btn px-2.5 py-1 rounded-lg text-xs font-medium text-indigo-100 hover:bg-white/10">1.5x</button>
+                                    <button onclick="setMediaSpeed(2, 'audio')" data-speed="2" class="a-speed-btn px-2.5 py-1 rounded-lg text-xs font-medium text-indigo-100 hover:bg-white/10">2x</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 flex items-center justify-between bg-amber-50/70 border border-amber-200/80 rounded-xl p-3.5">
+                            <p id="viewer-audio-desc" class="text-xs text-slate-600 line-clamp-2"></p>
+                            <button onclick="insertTimestampToScratchpad()" class="shrink-0 ml-3 text-xs font-semibold text-amber-800 bg-amber-100 hover:bg-amber-200 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition">
+                                <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                                <span>Timestamp Note</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- RIGHT PANE: Quick Revision Scratchpad -->
+                <div class="w-full lg:w-96 bg-slatebg border-t lg:border-t-0 lg:border-l border-slate-200 flex flex-col shrink-0 h-72 lg:h-auto">
+                    <div class="px-4 py-3 border-b border-slate-200/80 bg-white/60 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="pen-tool" class="w-4 h-4 text-indigo-600"></i>
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700">Quick Revision Scratchpad</h4>
+                        </div>
+                        <button id="scratchpad-timestamp-btn" onclick="insertTimestampToScratchpad()" class="hidden text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2 py-1 rounded-md items-center gap-1 transition">
+                            <i data-lucide="plus-circle" class="w-3 h-3"></i>
+                            <span>Timestamp</span>
+                        </button>
+                    </div>
+                    
+                    <div class="p-3.5 flex-1 flex flex-col">
+                        <textarea id="scratchpad-textarea" oninput="autoSaveScratchpad(this.value)" placeholder="Jot down key takeaways, exam questions, or timestamped thoughts while studying..." class="w-full flex-1 bg-white rounded-xl border border-slate-200/90 p-3.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 resize-none leading-relaxed shadow-2xs"></textarea>
+                        
+                        <div class="mt-2.5 flex items-center justify-between text-[11px] text-slate-400">
+                            <span id="scratchpad-status" class="flex items-center gap-1 text-emerald-600 font-medium">
+                                <i data-lucide="check-circle" class="w-3 h-3"></i>
+                                Auto-saved to item
+                            </span>
+                            <button onclick="copyScratchpadText()" class="text-slate-600 hover:text-indigo-700 font-medium flex items-center gap-1 transition">
+                                <i data-lucide="copy" class="w-3 h-3"></i>
+                                Copy Notes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // =========================================================================
+        // 1. ADMIN PASSWORD GUARD ("JENIL") & PERSISTENCE KEYS
+        // =========================================================================
+        const CREATOR_PASSWORD = "JENIL";
+        const STORAGE_KEY_ITEMS = "pixinic_studyvalt_items_v1";
+        const STORAGE_KEY_SUBJECTS = "pixinic_studyvalt_subjects_v1";
+        const SESSION_KEY_UNLOCKED = "pixinic_studyvalt_unlocked";
+
+        let isAdminUnlocked = sessionStorage.getItem(SESSION_KEY_UNLOCKED) === "true";
+        let pendingProtectedAction = null;
+
+        function requireAdminAuth(callback) {
+            if (isAdminUnlocked) {
+                callback();
+                return;
+            }
+            pendingProtectedAction = callback;
+            document.getElementById('admin-password-input').value = '';
+            document.getElementById('password-error-msg').classList.add('hidden');
+            const modal = document.getElementById('password-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => document.getElementById('admin-password-input').focus(), 50);
+            lucide.createIcons();
+        }
+
+        function closePasswordModal() {
+            const modal = document.getElementById('password-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            pendingProtectedAction = null;
+        }
+
+        function handlePasswordSubmit(event) {
+            event.preventDefault();
+            const entered = document.getElementById('admin-password-input').value;
+            const remember = document.getElementById('remember-session-checkbox').checked;
+
+            if (entered === CREATOR_PASSWORD) {
+                if (remember) {
+                    isAdminUnlocked = true;
+                    sessionStorage.setItem(SESSION_KEY_UNLOCKED, "true");
+                }
+                updateAdminStatusUI();
+                const action = pendingProtectedAction;
+                closePasswordModal();
+                showToast('Creator access verified!', 'emerald');
+                if (typeof action === 'function') {
+                    action();
+                }
+            } else {
+                document.getElementById('password-error-msg').classList.remove('hidden');
+                document.getElementById('admin-password-input').select();
+            }
+        }
+
+        function lockAdminSession() {
+            isAdminUnlocked = false;
+            sessionStorage.removeItem(SESSION_KEY_UNLOCKED);
+            updateAdminStatusUI();
+            showToast('Creator upload access locked', 'slate');
+        }
+
+        function updateAdminStatusUI() {
+            const icon = document.getElementById('admin-status-icon');
+            const text = document.getElementById('admin-status-text');
+            const actionBtn = document.getElementById('admin-status-action');
+            const banner = document.getElementById('admin-status-banner');
+
+            if (isAdminUnlocked) {
+                banner.className = 'mb-4 px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-between text-xs';
+                icon.setAttribute('data-lucide', 'unlock');
+                icon.className = 'w-3.5 h-3.5 text-emerald-600';
+                text.textContent = 'Creator Unlocked';
+                text.className = 'text-emerald-800 font-semibold';
+                actionBtn.textContent = 'Lock';
+                actionBtn.className = 'text-[11px] font-semibold text-emerald-700 hover:underline';
+                actionBtn.onclick = lockAdminSession;
+                document.querySelectorAll('.admin-btn-lock').forEach(el => el.classList.add('hidden'));
+            } else {
+                banner.className = 'mb-4 px-3 py-2 rounded-xl bg-slate-100 border border-slate-200/80 flex items-center justify-between text-xs';
+                icon.setAttribute('data-lucide', 'lock');
+                icon.className = 'w-3.5 h-3.5 text-amber-600';
+                text.textContent = 'Upload Locked';
+                text.className = 'text-slate-600 font-medium';
+                actionBtn.textContent = 'Unlock';
+                actionBtn.className = 'text-[11px] font-semibold text-indigo-700 hover:underline';
+                actionBtn.onclick = () => requireAdminAuth(() => {});
+                document.querySelectorAll('.admin-btn-lock').forEach(el => el.classList.remove('hidden'));
+            }
+            lucide.createIcons();
+        }
+
+        // =========================================================================
+        // 2. SYNTHETIC MEDIA GENERATORS (So pre-populated Audio plays natively!)
+        // =========================================================================
+        
+        function createSampleAudioBlobUrl(durationSec = 18, baseFreq = 261.63) {
+            const sampleRate = 22050;
+            const numSamples = sampleRate * durationSec;
+            const buffer = new ArrayBuffer(44 + numSamples * 2);
+            const view = new DataView(buffer);
+
+            const writeString = (offset, string) => {
+                for (let i = 0; i < string.length; i++) {
+                    view.setUint8(offset + i, string.charCodeAt(i));
+                }
+            };
+
+            writeString(0, 'RIFF');
+            view.setUint32(4, 36 + numSamples * 2, true);
+            writeString(8, 'WAVE');
+            writeString(12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, 1, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2, true);
+            view.setUint16(32, 2, true);
+            view.setUint16(34, 16, true);
+            writeString(36, 'data');
+            view.setUint32(40, numSamples * 2, true);
+
+            // Calm ambient study chord progression
+            const chords = [1, 1.25, 1.5, 1.125];
+            for (let i = 0; i < numSamples; i++) {
+                const t = i / sampleRate;
+                const chordIdx = Math.floor(t / 4.5) % chords.length;
+                const freq = baseFreq * chords[chordIdx];
+                const envelope = Math.min(1, (t % 4.5) * 4) * Math.exp(-(t % 4.5) * 0.45);
+                const sample = (Math.sin(2 * Math.PI * freq * t) * 0.4 + Math.sin(2 * Math.PI * (freq * 1.5) * t) * 0.2) * envelope;
+                view.setInt16(44 + i * 2, sample * 0x7FFF, true);
+            }
+
+            const blob = new Blob([view], { type: 'audio/wav' });
+            return URL.createObjectURL(blob);
+        }
+
+        // =========================================================================
+        // 3. APPLICATION STATE & SAMPLE STUDY MATERIALS (WITH LOCALSTORAGE)
+        // =========================================================================
+
+        const DEFAULT_SUBJECTS = [
+            { name: 'Computer Science', color: 'bg-indigo-500', description: 'Algorithms, data structures & operating systems' },
+            { name: 'Biology', color: 'bg-emerald-500', description: 'Cell metabolism, genetics & neurobiology' },
+            { name: 'Chemistry', color: 'bg-amber-500', description: 'Organic reactions, thermodynamics & lab notes' }
+        ];
+
+        const DEFAULT_ITEMS = [
+            {
+                id: 'item-1',
+                title: 'Data Structures: Binary Search Trees & Balancing',
+                subject: 'Computer Science',
+                type: 'note',
+                tags: ['algorithms', 'trees', 'midterm'],
+                date: 'Nov 14, 2026',
+                bookmarked: true,
+                content: `# Binary Search Trees (BST)\n\nA **Binary Search Tree** is a node-based binary tree data structure where each node has a comparable key and satisfies the ordering property:\n\n- The **left subtree** of a node contains only nodes with keys lesser than the node's key.\n- The **right subtree** of a node contains only nodes with keys greater than the node's key.\n\n## Time Complexity Comparison\n\n| Operation | Average Case | Worst Case (Skewed) |\n| :--- | :--- | :--- |\n| Search | \`O(log n)\` | \`O(n)\` |\n| Insert | \`O(log n)\` | \`O(n)\` |\n| Delete | \`O(log n)\` | \`O(n)\` |\n\n> **Exam Tip:** Always check whether the tree is self-balancing (such as an **AVL Tree** or **Red-Black Tree**) before assuming logarithmic worst-case bounds.\n\n### In-Order Traversal Code\n\`\`\`python\ndef inorder(root):\n    if root:\n        inorder(root.left)\n        print(root.val)\n        inorder(root.right)\n\`\`\``,
+                scratchpad: 'Review AVL rotation cases (LL, RR, LR, RL) before Friday quiz.'
+            },
+            {
+                id: 'item-2',
+                title: 'Cellular Respiration & ATP Synthesis Walkthrough',
+                subject: 'Biology',
+                type: 'video',
+                tags: ['metabolism', 'mitochondria', 'lecture-08'],
+                date: 'Nov 12, 2026',
+                bookmarked: false,
+                duration: '00:15',
+                description: 'Visual breakdown of Glycolysis, the Krebs Cycle, and Oxidative Phosphorylation across the inner mitochondrial membrane.',
+                mediaUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+                scratchpad: '[00:05] Remember: Net yield of glycolysis is 2 ATP and 2 NADH per glucose molecule.'
+            },
+            {
+                id: 'item-3',
+                title: 'Organic Chemistry: Reaction Mechanisms Summary',
+                subject: 'Chemistry',
+                type: 'note',
+                tags: ['organic', 'nucleophiles', 'formulas'],
+                date: 'Nov 10, 2026',
+                bookmarked: true,
+                content: `# SN1 vs SN2 Substitution Mechanisms\n\nUnderstanding nucleophilic substitution is foundational for organic synthesis:\n\n### 1. SN2 (Bimolecular Nucleophilic Substitution)\n- **Kinetics:** Second-order ($Rate = k[Substrate][Nucleophile]$)\n- **Stereochemistry:** Complete **inversion** of configuration (Walden inversion)\n- **Preferred Substrate:** Methyl > Primary ($1^\\circ$) > Secondary ($2^\\circ$)\n- **Solvent:** Polar **aprotic** solvents (DMSO, Acetone, DMF)\n\n### 2. SN1 (Unimolecular Nucleophilic Substitution)\n- **Kinetics:** First-order ($Rate = k[Substrate]$), proceeds via carbocation intermediate\n- **Stereochemistry:** **Racemization** (mixture of retention and inversion)\n- **Preferred Substrate:** Tertiary ($3^\\circ$) > Secondary ($2^\\circ$)`,
+                scratchpad: 'Watch out for carbocation rearrangements in SN1 reactions!'
+            },
+            {
+                id: 'item-4',
+                title: 'Voice Memo: Neurotransmitters & Synaptic Plasticity',
+                subject: 'Biology',
+                type: 'audio',
+                tags: ['neuroscience', 'voice-note', 'revision'],
+                date: 'Nov 08, 2026',
+                bookmarked: false,
+                duration: '00:18',
+                description: 'Quick self-recorded summary comparing Glutamate (excitatory) and GABA (inhibitory) receptor pathways.',
+                mediaUrl: '',
+                scratchpad: 'LTP (Long-Term Potentiation) relies heavily on NMDA receptor activation.'
+            },
+            {
+                id: 'item-5',
+                title: 'Operating Systems: Process Scheduling & Deadlocks',
+                subject: 'Computer Science',
+                type: 'note',
+                tags: ['os', 'concurrency', 'systems'],
+                date: 'Nov 05, 2026',
+                bookmarked: false,
+                content: `# Deadlock Characterization (Coffman Conditions)\n\nA deadlock situation can arise if and only if the following four conditions hold simultaneously in a system:\n\n1. **Mutual Exclusion:** At least one resource must be held in a non-sharable mode.\n2. **Hold and Wait:** A process must be holding at least one resource and waiting to acquire additional resources.\n3. **No Preemption:** Resources cannot be preempted; they can only be released voluntarily.\n4. **Circular Wait:** A closed chain of processes exists, where each process holds a resource needed by the next.\n\n> Breaking any **single** condition prevents deadlocks from occurring.`,
+                scratchpad: ''
+            },
+            {
+                id: 'item-6',
+                title: 'Audio Revision: Chemical Equilibrium & Le Chatelier',
+                subject: 'Chemistry',
+                type: 'audio',
+                tags: ['equilibrium', 'thermodynamics', 'audio-note'],
+                date: 'Nov 02, 2026',
+                bookmarked: false,
+                duration: '00:22',
+                description: 'Audio lecture notes explaining how concentration, pressure, and temperature shifts affect equilibrium constant Kc.',
+                mediaUrl: '',
+                scratchpad: 'Only temperature changes the numerical value of Kc.'
+            }
+        ];
+
+        function loadSavedState() {
+            let subjects = [...DEFAULT_SUBJECTS];
+            let items = [...DEFAULT_ITEMS];
+            try {
+                const rawSubj = localStorage.getItem(STORAGE_KEY_SUBJECTS);
+                if (rawSubj) {
+                    const parsedSubj = JSON.parse(rawSubj);
+                    if (Array.isArray(parsedSubj) && parsedSubj.length > 0) subjects = parsedSubj;
+                }
+                const rawItems = localStorage.getItem(STORAGE_KEY_ITEMS);
+                if (rawItems) {
+                    const parsedItems = JSON.parse(rawItems);
+                    if (Array.isArray(parsedItems)) items = parsedItems;
+                }
+            } catch (e) {
+                console.warn('Could not read localStorage:', e);
+            }
+
+            // Re-hydrate synthetic audio blobs for sample audio items so they always play
+            items.forEach((it, idx) => {
+                if (it.type === 'audio' && (!it.mediaUrl || it.mediaUrl.startsWith('blob:'))) {
+                    it.mediaUrl = createSampleAudioBlobUrl(18 + (idx % 6), 240 + idx * 25);
+                }
+            });
+
+            return { subjects, items };
+        }
+
+        const loaded = loadSavedState();
+
+        let state = {
+            subjects: loaded.subjects,
+            selectedSubject: 'All',
+            selectedType: 'all',
+            searchQuery: '',
+            activeItemId: null,
+            items: loaded.items
+        };
+
+        function persistVaultToStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEY_SUBJECTS, JSON.stringify(state.subjects));
+                // Avoid storing ephemeral blob URLs across page reloads if huge, keep metadata & text
+                const serializableItems = state.items.map(it => ({
+                    ...it,
+                    mediaUrl: it.mediaUrl && it.mediaUrl.startsWith('blob:') ? '' : it.mediaUrl
+                }));
+                localStorage.setItem(STORAGE_KEY_ITEMS, JSON.stringify(serializableItems));
+            } catch (e) {
+                console.warn('Storage quota warning:', e);
+            }
+        }
+
+        // Temporary upload & recorder holders
+        let pendingFile = null;
+        let pendingFileUrl = null;
+        let pendingNoteIsPdf = false;
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let recTimerInterval = null;
+        let recSeconds = 0;
+
+        // =========================================================================
+        // 4. INITIALIZATION & RENDERING
+        // =========================================================================
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateAdminStatusUI();
+            renderSidebar();
+            renderGrid();
+            updateStats();
+            lucide.createIcons();
+
+            // Mobile menu listener
+            document.getElementById('mobile-menu-btn').addEventListener('click', () => toggleMobileSidebar(true));
+
+            // Audio player event listeners
+            const audioEl = document.getElementById('study-audio-player');
+            audioEl.addEventListener('timeupdate', updateAudioProgress);
+            audioEl.addEventListener('loadedmetadata', () => {
+                document.getElementById('audio-total-duration').textContent = formatTime(audioEl.duration);
+            });
+            audioEl.addEventListener('ended', () => {
+                setAudioPlayingUI(false);
+            });
+        });
+
+        function toggleMobileSidebar(open) {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            if (open) {
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+            }
+        }
+
+        function renderSidebar() {
+            const list = document.getElementById('subjects-list');
+            list.innerHTML = '';
+
+            state.subjects.forEach(subj => {
+                const count = state.items.filter(i => i.subject === subj.name).length;
+                const isSelected = state.selectedSubject === subj.name;
+                const btn = document.createElement('button');
+                btn.onclick = () => selectSubject(subj.name);
+                btn.className = `w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition ${
+                    isSelected
+                        ? 'bg-indigo-50 text-indigo-800 font-semibold'
+                        : 'text-slate-600 hover:bg-slate-50'
+                }`;
+                btn.innerHTML = `
+                    <span class="flex items-center gap-2.5 truncate">
+                        <span class="w-2.5 h-2.5 rounded-full ${subj.color} shrink-0"></span>
+                        <span class="truncate">${escapeHtml(subj.name)}</span>
+                    </span>
+                    <span class="text-xs font-medium px-2 py-0.5 rounded-full ${
+                        isSelected ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-500'
+                    }">${count}</span>
+                `;
+                list.appendChild(btn);
+            });
+
+            // Update Library buttons state
+            document.querySelectorAll('.subject-nav-item').forEach(btn => {
+                const isMatch = btn.dataset.subject === state.selectedSubject;
+                if (isMatch) {
+                    btn.className = 'subject-nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition bg-indigo-50 text-indigo-800';
+                } else {
+                    btn.className = 'subject-nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition';
+                }
+            });
+
+            // Populate Upload Modal subject dropdown
+            const select = document.getElementById('upload-subject');
+            if (select) {
+                select.innerHTML = state.subjects.map(s => `<option value="${escapeHtml(s.name)}">${escapeHtml(s.name)}</option>`).join('');
+            }
+        }
+        function renderGrid() {
+            const grid = document.getElementById('materials-grid');
+            const emptyState = document.getElementById('empty-state');
+
+            // Items scoped to current subject selection (before media type filter)
+            const subjectScopedItems = state.items.filter(item => {
+                if (state.selectedSubject === 'Favorites') return item.bookmarked;
+                if (state.selectedSubject !== 'All') return item.subject === state.selectedSubject;
+                return true;
+            });
+
+            // Update the 3 subject option counts (Notes, Video, Audio, All Formats)
+            document.getElementById('tab-count-note').textContent = subjectScopedItems.filter(i => i.type === 'note').length;
+            document.getElementById('tab-count-video').textContent = subjectScopedItems.filter(i => i.type === 'video').length;
+            document.getElementById('tab-count-audio').textContent = subjectScopedItems.filter(i => i.type === 'audio').length;
+            document.getElementById('tab-count-all').textContent = subjectScopedItems.length;
+
+            // Apply Type & Search filters
+            const filtered = subjectScopedItems.filter(item => {
+                if (state.selectedType !== 'all' && item.type !== state.selectedType) return false;
+
+                if (state.searchQuery.trim() !== '') {
+                    const q = state.searchQuery.toLowerCase();
+                    const inTitle = item.title.toLowerCase().includes(q);
+                    const inSubject = item.subject.toLowerCase().includes(q);
+                    const inTags = item.tags.some(t => t.toLowerCase().includes(q));
+                    const inContent = (item.content || item.description || '').toLowerCase().includes(q);
+                    return inTitle || inSubject || inTags || inContent;
+                }
+                return true;
+            });
+
+            // Update Heading, Subtitle & Quick Upload Button Label
+            const spaceBadge = document.getElementById('subject-space-badge');
+            const quickUploadLabel = document.getElementById('quick-upload-btn-label');
+
+            if (state.selectedSubject === 'All') {
+                spaceBadge.classList.add('hidden');
+                document.getElementById('current-view-title').textContent = 'Pixinic StudyValt — All Subjects';
+                document.getElementById('current-view-subtitle').textContent = 'Select a subject tab on the left or switch between Notes, Video, and Audio below.';
+                quickUploadLabel.textContent = 'Upload Material';
+            } else if (state.selectedSubject === 'Favorites') {
+                spaceBadge.classList.add('hidden');
+                document.getElementById('current-view-title').textContent = 'Bookmarked Study Materials';
+                document.getElementById('current-view-subtitle').textContent = 'Your starred notes, videos, and audio recordings across all subjects.';
+                quickUploadLabel.textContent = 'Upload Material';
+            } else {
+                const subjObj = state.subjects.find(s => s.name === state.selectedSubject);
+                spaceBadge.classList.remove('hidden');
+                document.getElementById('current-view-title').textContent = state.selectedSubject;
+                document.getElementById('current-view-subtitle').textContent = (subjObj && subjObj.description) ? subjObj.description : `Dedicated study space for ${state.selectedSubject} — Notes, Video & Audio.`;
+                quickUploadLabel.textContent = `Upload to ${state.selectedSubject}`;
+            }
+
+            document.getElementById('filtered-count-pill').textContent = filtered.length;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                const typeLabel = state.selectedType === 'all' ? 'study materials' : `${state.selectedType} materials`;
+                document.getElementById('empty-state-title').textContent = `No ${typeLabel} found here`;
+                document.getElementById('empty-state-desc').textContent = state.selectedSubject !== 'All' && state.selectedSubject !== 'Favorites'
+                    ? `Click "Upload Study Material" to add ${typeLabel} directly into the ${state.selectedSubject} tab.`
+                    : 'Try switching formats or upload a new note, lecture video, or audio recording.';
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+                lucide.createIcons();
+                return;
+            }
+
+            const colors = ['bg-purple-500', 'bg-cyan-500', 'bg-pink-500', 'bg-teal-500', 'bg-orange-500'];
+            const color = colors[state.subjects.length % colors.length];
+            state.subjects.push({ name, color });
+
+            input.value = '';
+            document.getElementById('new-subject-box').classList.add('hidden');
+            renderSidebar();
+            selectSubject(name);
+            showToast(`Added subject "${name}"`, 'emerald');
+        }
+
+        function toggleFavorite(id) {
+            const item = state.items.find(i => i.id === id);
+            if (!item) return;
+            item.bookmarked = !item.bookmarked;
+            updateStats();
+            renderGrid();
+            if (state.activeItemId === id) {
+                updateViewerBookmarkIcon(item.bookmarked);
+            }
+        }
+
+        // =========================================================================
+        // 5. FILTERING & CREATE SUBJECT TAB MANAGEMENT
+        // =========================================================================
+
+        function selectSubject(subjectName) {
+            state.selectedSubject = subjectName;
+            renderSidebar();
+            renderGrid();
+            toggleMobileSidebar(false);
+        }
+
+        function setTypeFilter(type) {
+            state.selectedType = type;
+            document.querySelectorAll('.type-filter-btn').forEach(btn => {
+                const isActive = btn.dataset.type === type;
+                if (isActive) {
+                    btn.className = 'type-filter-btn px-4 py-2.5 rounded-t-xl border-b-2 border-indigo-700 bg-white text-indigo-900 text-xs sm:text-sm font-semibold transition flex items-center gap-2 shrink-0 shadow-2xs';
+                } else {
+                    btn.className = 'type-filter-btn px-4 py-2.5 rounded-t-xl border-b-2 border-transparent text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white/60 transition flex items-center gap-2 shrink-0';
+                }
+            });
+            renderGrid();
+        }
+
+        function handleSearch(val) {
+            state.searchQuery = val;
+            renderGrid();
+        }
+
+        function openCreateSubjectModal() {
+            document.getElementById('create-subject-name').value = '';
+            document.getElementById('create-subject-desc').value = '';
+            const modal = document.getElementById('create-subject-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => document.getElementById('create-subject-name').focus(), 50);
+            lucide.createIcons();
+        }
+
+        function closeCreateSubjectModal() {
+            const modal = document.getElementById('create-subject-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function handleCreateSubjectSubmit(event) {
+            event.preventDefault();
+            const name = document.getElementById('create-subject-name').value.trim();
+            const description = document.getElementById('create-subject-desc').value.trim();
+            const colorInput = document.querySelector('input[name="subjectColor"]:checked');
+            const color = colorInput ? colorInput.value : 'bg-indigo-500';
+
+            if (!name) return;
+
+            if (state.subjects.some(s => s.name.toLowerCase() === name.toLowerCase())) {
+                showToast(`Subject tab "${name}" already exists!`, 'amber');
+                return;
+            }
+
+            state.subjects.push({
+                name,
+                color,
+                description: description || `Dedicated study space for ${name} — Notes, Video & Audio.`
+            });
+
+            persistVaultToStorage();
+            closeCreateSubjectModal();
+            renderSidebar();
+            selectSubject(name);
+            showToast(`Created subject tab "${name}"!`, 'emerald');
+        }
+
+        function toggleFavorite(id) {
+            const item = state.items.find(i => i.id === id);
+            if (!item) return;
+            item.bookmarked = !item.bookmarked;
+            persistVaultToStorage();
+            updateStats();
+            renderGrid();
+            if (state.activeItemId === id) {
+                updateViewerBookmarkIcon(item.bookmarked);
+            }
+        }
+
+        // =========================================================================
+        // 6. GUIDED UPLOAD / CREATE MODAL LOGIC
+        // =========================================================================
+
+        function openUploadModal() {
+            document.getElementById('upload-form').reset();
+            pendingFile = null;
+            pendingFileUrl = null;
+            pendingNoteIsPdf = false;
+            stopBrowserRecording(true);
+
+            document.getElementById('note-file-badge').classList.add('hidden');
+            document.getElementById('note-file-badge').classList.remove('flex');
+            document.getElementById('media-dropzone-placeholder').classList.remove('hidden');
+            document.getElementById('media-file-selected').classList.add('hidden');
+            document.getElementById('media-file-selected').classList.remove('flex');
+            document.getElementById('upload-new-subject').classList.add('hidden');
+            document.getElementById('inline-audio-recorder').classList.add('hidden');
+
+            // Default upload format to currently active tab if note/video/audio, else note
+            const initialType = ['note', 'video', 'audio'].includes(state.selectedType) ? state.selectedType : 'note';
+            const radio = document.querySelector(`input[name="materialType"][value="${initialType}"]`);
+            if (radio) radio.checked = true;
+            switchUploadType(initialType);
+
+            // Preselect current subject tab if viewing a specific subject
+            if (state.selectedSubject !== 'All' && state.selectedSubject !== 'Favorites') {
+                document.getElementById('upload-subject').value = state.selectedSubject;
+            }
+
+            const modal = document.getElementById('upload-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeUploadModal() {
+            stopBrowserRecording(true);
+            const modal = document.getElementById('upload-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function promptInlineSubjectInModal() {
+            const inp = document.getElementById('upload-new-subject');
+            inp.classList.toggle('hidden');
+            if (!inp.classList.contains('hidden')) inp.focus();
+        }
+
+        function switchUploadType(type) {
+            const noteSec = document.getElementById('note-input-section');
+            const mediaSec = document.getElementById('media-file-section');
+            const mediaInput = document.getElementById('media-file-input');
+            const mediaLabel = document.getElementById('media-file-label');
+            const mediaHint = document.getElementById('media-format-hint');
+            const recToggleBtn = document.getElementById('toggle-recorder-btn');
+            const videoUrlBox = document.getElementById('video-url-fallback-box');
+
+            // Reset selected media file when switching between video and audio
+            pendingFile = null;
+            pendingFileUrl = null;
+            document.getElementById('media-dropzone-placeholder').classList.remove('hidden');
+            document.getElementById('media-file-selected').classList.add('hidden');
+            document.getElementById('media-file-selected').classList.remove('flex');
+            document.getElementById('inline-audio-recorder').classList.add('hidden');
+
+            if (type === 'note') {
+                noteSec.classList.remove('hidden');
+                mediaSec.classList.add('hidden');
+            } else {
+                noteSec.classList.add('hidden');
+                mediaSec.classList.remove('hidden');
+                if (type === 'video') {
+                    mediaInput.accept = 'video/*';
+                    mediaLabel.textContent = 'Upload Video File *';
+                    mediaHint.textContent = 'Supports MP4, WebM, MOV (Instant in-browser playback)';
+                    recToggleBtn.classList.add('hidden');
+                    recToggleBtn.classList.remove('flex');
+                    videoUrlBox.classList.remove('hidden');
+                } else {
+                    mediaInput.accept = 'audio/*';
+                    mediaLabel.textContent = 'Upload Audio Recording *';
+                    mediaHint.textContent = 'Supports MP3, WAV, M4A, OGG (or record directly above)';
+                    recToggleBtn.classList.remove('hidden');
+                    recToggleBtn.classList.add('flex');
+                    videoUrlBox.classList.add('hidden');
+                }
+            }
+            lucide.createIcons();
+        }
+
+        // In-Browser Microphone Audio Recorder
+        function toggleAudioRecorderBox() {
+            const box = document.getElementById('inline-audio-recorder');
+            box.classList.toggle('hidden');
+        }
+
+        async function startBrowserRecording() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showToast('Microphone recording is not supported in this browser.', 'amber');
+                return;
+            }
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                recordedChunks = [];
+                mediaRecorder = new MediaRecorder(stream);
+
+                mediaRecorder.ondataavailable = (e) => {
+                    if (e.data.size > 0) recordedChunks.push(e.data);
+                };
+
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+                    pendingFile = { name: `Voice-Note-${new Date().toLocaleTimeString().replace(/:/g, '-')}.webm`, size: blob.size };
+                    pendingFileUrl = URL.createObjectURL(blob);
+
+                    document.getElementById('selected-media-name').textContent = pendingFile.name;
+                    document.getElementById('selected-media-size').textContent = `${formatBytes(blob.size)} • Recorded audio ready`;
+                    document.getElementById('media-dropzone-placeholder').classList.add('hidden');
+                    document.getElementById('media-file-selected').classList.remove('hidden');
+                    document.getElementById('media-file-selected').classList.add('flex');
+
+                    stream.getTracks().forEach(track => track.stop());
+                    showToast('Voice recording attached!', 'emerald');
+                };
+
+                mediaRecorder.start();
+                recSeconds = 0;
+                document.getElementById('rec-timer').textContent = '00:00';
+                document.getElementById('rec-dot').className = 'w-2.5 h-2.5 rounded-full bg-rose-600 animate-ping';
+                document.getElementById('rec-status-text').textContent = 'Recording microphone...';
+                document.getElementById('btn-start-rec').disabled = true;
+                document.getElementById('btn-stop-rec').disabled = false;
+
+                recTimerInterval = setInterval(() => {
+                    recSeconds++;
+                    document.getElementById('rec-timer').textContent = formatTime(recSeconds);
+                }, 1000);
+            } catch (err) {
+                showToast('Microphone permission denied or unavailable.', 'amber');
+            }
+        }
+
+        function stopBrowserRecording(silent = false) {
+            if (recTimerInterval) {
+                clearInterval(recTimerInterval);
+                recTimerInterval = null;
+            }
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+            }
+            const dot = document.getElementById('rec-dot');
+            if (dot) {
+                dot.className = 'w-2.5 h-2.5 rounded-full bg-slate-400';
+                document.getElementById('rec-status-text').textContent = silent ? 'Ready to record microphone audio' : 'Recording saved below';
+                document.getElementById('btn-start-rec').disabled = false;
+                document.getElementById('btn-stop-rec').disabled = true;
+            }
+        }
+
+        function handleNoteFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const titleInput = document.getElementById('upload-title');
+            if (!titleInput.value.trim()) {
+                titleInput.value = file.name.replace(/\.[^/.]+$/, "");
+            }
+
+            const badge = document.getElementById('note-file-badge');
+            document.getElementById('note-file-name').textContent = `${file.name} (${formatBytes(file.size)})`;
+            badge.classList.remove('hidden');
+            badge.classList.add('flex');
+
+            if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+                pendingNoteIsPdf = true;
+                pendingFileUrl = URL.createObjectURL(file);
+                document.getElementById('upload-note-content').value = `[PDF Document Attached: ${file.name}]`;
+            } else {
+                pendingNoteIsPdf = false;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('upload-note-content').value = e.target.result;
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function clearNoteFile() {
+            document.getElementById('note-file-input').value = '';
+            document.getElementById('note-file-badge').classList.add('hidden');
+            document.getElementById('note-file-badge').classList.remove('flex');
+            pendingNoteIsPdf = false;
+            pendingFileUrl = null;
+        }
+
+        function handleMediaFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            pendingFile = file;
+            pendingFileUrl = URL.createObjectURL(file);
+
+            const titleInput = document.getElementById('upload-title');
+            if (!titleInput.value.trim()) {
+                titleInput.value = file.name.replace(/\.[^/.]+$/, "");
+            }
+
+            document.getElementById('selected-media-name').textContent = file.name;
+            document.getElementById('selected-media-size').textContent = `${formatBytes(file.size)} • Ready for instant playback`;
+            document.getElementById('media-dropzone-placeholder').classList.add('hidden');
+            document.getElementById('media-file-selected').classList.remove('hidden');
+            document.getElementById('media-file-selected').classList.add('flex');
+        }
+
+        function handleUploadSubmit(event) {
+            event.preventDefault();
+
+            const type = document.querySelector('input[name="materialType"]:checked').value;
+            const title = document.getElementById('upload-title').value.trim();
+            const newSubjInput = document.getElementById('upload-new-subject');
+            let subject = document.getElementById('upload-subject').value;
+
+            // Create new subject if entered inline
+            if (!newSubjInput.classList.contains('hidden') && newSubjInput.value.trim()) {
+                subject = newSubjInput.value.trim();
+                if (!state.subjects.some(s => s.name.toLowerCase() === subject.toLowerCase())) {
+                    state.subjects.push({
+                        name: subject,
+                        color: 'bg-indigo-500',
+                        description: `Dedicated study space for ${subject} — Notes, Video & Audio.`
+                    });
+                }
+            }
+
+            const rawTags = document.getElementById('upload-tags').value;
+            const tags = rawTags.split(',').map(t => t.trim().replace(/^#/, '')).filter(Boolean);
+            if (tags.length === 0) tags.push('pixinic-vault');
+
+            const todayStr = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+
+            if (type === 'note') {
+                const content = document.getElementById('upload-note-content').value.trim();
+                if (!content && !pendingNoteIsPdf) {
+                    showToast('Please write some note content or import a file.', 'amber');
+                    return;
+                }
+
+                const newItem = {
+                    id: 'item-' + Date.now(),
+                    title,
+                    subject,
+                    type: 'note',
+                    tags,
+                    date: todayStr,
+                    bookmarked: false,
+                    isPdf: pendingNoteIsPdf,
+                    pdfUrl: pendingNoteIsPdf ? pendingFileUrl : null,
+                    content: content || 'Uploaded PDF Document',
+                    scratchpad: ''
+                };
+                state.items.unshift(newItem);
+                finalizeUpload(newItem);
+            } else {
+                const externalVideoUrl = type === 'video' ? document.getElementById('upload-video-url').value.trim() : '';
+                const finalMediaUrl = pendingFileUrl || externalVideoUrl;
+
+                if (!finalMediaUrl) {
+                    showToast(`Please select a local ${type} file${type === 'video' ? ' or paste a video link' : ''}.`, 'amber');
+                    return;
+                }
+
+                const desc = document.getElementById('upload-media-desc').value.trim();
+                const newItem = {
+                    id: 'item-' + Date.now(),
+                    title,
+                    subject,
+                    type,
+                    tags,
+                    date: todayStr,
+                    bookmarked: false,
+                    duration: pendingFile ? 'Local File' : 'Video Link',
+                    description: desc || (pendingFile ? `Uploaded ${type} file (${pendingFile.name})` : `External ${type} lecture`),
+                    mediaUrl: finalMediaUrl,
+                    scratchpad: ''
+                };
+
+                // Probe actual media duration asynchronously
+                const probe = document.createElement(type);
+                probe.src = finalMediaUrl;
+                probe.onloadedmetadata = () => {
+                    if (isFinite(probe.duration)) {
+                        newItem.duration = formatTime(probe.duration);
+                        renderGrid();
+                    }
+                };
+
+                state.items.unshift(newItem);
+                finalizeUpload(newItem);
+            }
+        }
+
+        function finalizeUpload(item) {
+            persistVaultToStorage();
+            closeUploadModal();
+            state.selectedSubject = item.subject;
+            setTypeFilter(item.type);
+            renderSidebar();
+            updateStats();
+            renderGrid();
+            showToast(`Saved to ${item.subject} (${item.type.toUpperCase()})!`, 'emerald');
+        }
+            }
+
+            const rawTags = document.getElementById('upload-tags').value;
+            const tags = rawTags.split(',').map(t => t.trim().replace(/^#/, '')).filter(Boolean);
+            if (tags.length === 0) tags.push('study-vault');
+
+            const todayStr = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+
+            if (type === 'note') {
+                const content = document.getElementById('upload-note-content').value.trim();
+                if (!content && !pendingNoteIsPdf) {
+                    showToast('Please write some note content or import a file.', 'amber');
+                    return;
+                }
+
+                const newItem = {
+                    id: 'item-' + Date.now(),
+                    title,
+                    subject,
+                    type: 'note',
+                    tags,
+                    date: todayStr,
+                    bookmarked: false,
+                    isPdf: pendingNoteIsPdf,
+                    pdfUrl: pendingNoteIsPdf ? pendingFileUrl : null,
+                    content: content || 'Uploaded PDF Document',
+                    scratchpad: ''
+                };
+                state.items.unshift(newItem);
+                finalizeUpload(newItem);
+            } else {
+                if (!pendingFileUrl) {
+                    showToast(`Please select a local ${type} file to upload.`, 'amber');
+                    return;
+                }
+
+                const desc = document.getElementById('upload-media-desc').value.trim();
+                const newItem = {
+                    id: 'item-' + Date.now(),
+                    title,
+                    subject,
+                    type,
+                    tags,
+                    date: todayStr,
+                    bookmarked: false,
+                    duration: 'Local File',
+                    description: desc || `Uploaded ${type} file (${pendingFile.name})`,
+                    mediaUrl: pendingFileUrl,
+                    scratchpad: ''
+                };
+
+                // Probe actual media duration asynchronously
+                const probe = document.createElement(type);
+                probe.src = pendingFileUrl;
+                probe.onloadedmetadata = () => {
+                    if (isFinite(probe.duration)) {
+                        newItem.duration = formatTime(probe.duration);
+                        renderGrid();
+                    }
+                };
+
+                state.items.unshift(newItem);
+                finalizeUpload(newItem);
+            }
+        }
+
+        function finalizeUpload(item) {
+            closeUploadModal();
+            renderSidebar();
+            updateStats();
+            renderGrid();
+            showToast(`"${item.title}" added to StudyVault!`, 'emerald');
+        }
+
+        // =========================================================================
+        // 6. SPLIT-PANE STUDY VIEWER & MEDIA PLAYERS
+        // =========================================================================
+
+        function openViewer(id) {
+            const item = state.items.find(i => i.id === id);
+            if (!item) return;
+            state.activeItemId = id;
+
+            // Header Details
+            const badgeConfig = getTypeBadgeConfig(item.type);
+            const badgeEl = document.getElementById('viewer-type-badge');
+            badgeEl.textContent = badgeConfig.label;
+            badgeEl.className = `px-2.5 py-1 rounded-lg text-xs font-semibold uppercase tracking-wide shrink-0 ${badgeConfig.classes}`;
+
+            document.getElementById('viewer-title').textContent = item.title;
+            document.getElementById('viewer-subject').textContent = item.subject;
+            updateViewerBookmarkIcon(item.bookmarked);
+
+            // Scratchpad
+            document.getElementById('scratchpad-textarea').value = item.scratchpad || '';
+            const tsBtn = document.getElementById('scratchpad-timestamp-btn');
+
+            // Hide all viewer containers first & pause media
+            const noteCont = document.getElementById('viewer-note-container');
+            const videoCont = document.getElementById('viewer-video-container');
+            const audioCont = document.getElementById('viewer-audio-container');
+            const videoEl = document.getElementById('study-video-player');
+            const audioEl = document.getElementById('study-audio-player');
+
+            videoEl.pause();
+            audioEl.pause();
+            setAudioPlayingUI(false);
+
+            noteCont.classList.add('hidden');
+            videoCont.classList.add('hidden');
+            audioCont.classList.add('hidden');
+
+            if (item.type === 'note') {
+                tsBtn.classList.add('hidden');
+                tsBtn.classList.remove('flex');
+                noteCont.classList.remove('hidden');
+
+                if (item.isPdf && item.pdfUrl) {
+                    document.getElementById('viewer-meta').textContent = 'PDF Document';
+                    document.getElementById('note-word-count').textContent = 'PDF Viewer';
+                    document.getElementById('note-rendered-view').classList.add('hidden');
+                    document.getElementById('note-editor-view').classList.add('hidden');
+                    document.getElementById('note-pdf-view').classList.remove('hidden');
+                    document.getElementById('note-pdf-view').classList.add('flex');
+                    document.getElementById('pdf-iframe').src = item.pdfUrl;
+                } else {
+                    document.getElementById('note-pdf-view').classList.add('hidden');
+                    document.getElementById('note-pdf-view').classList.remove('flex');
+                    const words = countWords(item.content);
+                    document.getElementById('viewer-meta').textContent = `${words} words • ${item.date}`;
+                    document.getElementById('note-word-count').textContent = `${words} words`;
+                    document.getElementById('note-rendered-view').innerHTML = marked.parse(item.content || '');
+                    document.getElementById('note-edit-textarea').value = item.content || '';
+                    setNoteMode('read');
+                }
+            } else if (item.type === 'video') {
+                tsBtn.classList.remove('hidden');
+                tsBtn.classList.add('flex');
+                videoCont.classList.remove('hidden');
+                document.getElementById('viewer-meta').textContent = `Video Lecture • ${item.date}`;
+                document.getElementById('viewer-video-desc').textContent = item.description || '';
+                videoEl.src = item.mediaUrl;
+                setMediaSpeed(1, 'video');
+            } else if (item.type === 'audio') {
+                tsBtn.classList.remove('hidden');
+                tsBtn.classList.add('flex');
+                audioCont.classList.remove('hidden');
+                document.getElementById('viewer-meta').textContent = `Audio Recording • ${item.date}`;
+                document.getElementById('audio-deck-title').textContent = item.title;
+                document.getElementById('audio-deck-subtitle').textContent = `${item.subject} • ${item.date}`;
+                document.getElementById('viewer-audio-desc').textContent = item.description || '';
+                audioEl.src = item.mediaUrl;
+                document.getElementById('audio-seek-slider').value = 0;
+                document.getElementById('audio-current-time').textContent = '00:00';
+                setMediaSpeed(1, 'audio');
+            }
+
+            const modal = document.getElementById('viewer-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeViewerModal() {
+            document.getElementById('study-video-player').pause();
+            document.getElementById('study-audio-player').pause();
+            setAudioPlayingUI(false);
+
+            const modal = document.getElementById('viewer-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            state.activeItemId = null;
+        }
+
+        function setNoteMode(mode) {
+            const readView = document.getElementById('note-rendered-view');
+            const editView = document.getElementById('note-editor-view');
+            const btnRead = document.getElementById('btn-mode-read');
+            const btnEdit = document.getElementById('btn-mode-edit');
+
+            if (mode === 'read') {
+                readView.classList.remove('hidden');
+                editView.classList.add('hidden');
+                btnRead.className = 'px-3 py-1 rounded-lg text-xs font-semibold bg-white text-slate-900 shadow-xs transition';
+                btnEdit.className = 'px-3 py-1 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 transition';
+            } else {
+                readView.classList.add('hidden');
+                editView.classList.remove('hidden');
+                editView.classList.add('flex');
+                btnEdit.className = 'px-3 py-1 rounded-lg text-xs font-semibold bg-white text-slate-900 shadow-xs transition';
+                btnRead.className = 'px-3 py-1 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 transition';
+            }
+        }
+
+        function saveEditedNote() {
+            const item = state.items.find(i => i.id === state.activeItemId);
+            if (!item) return;
+
+            const updatedContent = document.getElementById('note-edit-textarea').value;
+            item.content = updatedContent;
+            persistVaultToStorage();
+            document.getElementById('note-rendered-view').innerHTML = marked.parse(updatedContent);
+            const words = countWords(updatedContent);
+            document.getElementById('note-word-count').textContent = `${words} words`;
+            document.getElementById('viewer-meta').textContent = `${words} words • ${item.date}`;
+
+            setNoteMode('read');
+            renderGrid();
+            showToast('Study note updated', 'emerald');
+        }
+
+        // Audio Deck Controls
+        function toggleAudioPlay() {
+            const audioEl = document.getElementById('study-audio-player');
+            if (audioEl.paused) {
+                audioEl.play();
+                setAudioPlayingUI(true);
+            } else {
+                audioEl.pause();
+                setAudioPlayingUI(false);
+            }
+        }
+
+        function setAudioPlayingUI(isPlaying) {
+            const icon = document.getElementById('audio-play-icon');
+            const eq = document.getElementById('audio-equalizer');
+            if (isPlaying) {
+                icon.setAttribute('data-lucide', 'pause');
+                eq.classList.add('eq-playing');
+            } else {
+                icon.setAttribute('data-lucide', 'play');
+                eq.classList.remove('eq-playing');
+            }
+            lucide.createIcons();
+        }
+
+        function updateAudioProgress() {
+            const audioEl = document.getElementById('study-audio-player');
+            const slider = document.getElementById('audio-seek-slider');
+            if (audioEl.duration) {
+                slider.value = (audioEl.currentTime / audioEl.duration) * 100;
+                document.getElementById('audio-current-time').textContent = formatTime(audioEl.currentTime);
+            }
+        }
+
+        function seekAudio(percent) {
+            const audioEl = document.getElementById('study-audio-player');
+            if (audioEl.duration) {
+                audioEl.currentTime = (percent / 100) * audioEl.duration;
+            }
+        }
+
+        function skipAudio(seconds) {
+            const audioEl = document.getElementById('study-audio-player');
+            if (audioEl.duration) {
+                audioEl.currentTime = Math.max(0, Math.min(audioEl.duration, audioEl.currentTime + seconds));
+            }
+        }
+
+        function setMediaSpeed(rate, kind) {
+            if (kind === 'video') {
+                document.getElementById('study-video-player').playbackRate = rate;
+                document.querySelectorAll('.v-speed-btn').forEach(btn => {
+                    if (parseFloat(btn.dataset.speed) === rate) {
+                        btn.className = 'v-speed-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-600 text-white';
+                    } else {
+                        btn.className = 'v-speed-btn px-2.5 py-1 rounded-lg text-xs font-medium bg-white border border-slate-200 text-slate-700 hover:bg-slate-100';
+                    }
+                });
+            } else {
+                document.getElementById('study-audio-player').playbackRate = rate;
+                document.querySelectorAll('.a-speed-btn').forEach(btn => {
+                    if (parseFloat(btn.dataset.speed) === rate) {
+                        btn.className = 'a-speed-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-white text-slate-900';
+                    } else {
+                        btn.className = 'a-speed-btn px-2.5 py-1 rounded-lg text-xs font-medium text-indigo-100 hover:bg-white/10';
+                    }
+                });
+            }
+        }
+
+        // =========================================================================
+        // 7. QUICK REVISION SCRATCHPAD & ITEM ACTIONS
+        // =========================================================================
+
+        function autoSaveScratchpad(text) {
+            const item = state.items.find(i => i.id === state.activeItemId);
+            if (!item) return;
+            item.scratchpad = text;
+            persistVaultToStorage();
+        }
+
+        function insertTimestampToScratchpad() {
+            const item = state.items.find(i => i.id === state.activeItemId);
+            if (!item) return;
+
+            let currentTime = 0;
+            if (item.type === 'video') {
+                currentTime = document.getElementById('study-video-player').currentTime;
+            } else if (item.type === 'audio') {
+                currentTime = document.getElementById('study-audio-player').currentTime;
+            }
+
+            const stamp = `[${formatTime(currentTime)}] `;
+            const area = document.getElementById('scratchpad-textarea');
+            const prefix = area.value && !area.value.endsWith('\n') ? '\n' : '';
+            area.value += prefix + stamp;
+            area.focus();
+            autoSaveScratchpad(area.value);
+        }
+
+        function copyScratchpadText() {
+            const area = document.getElementById('scratchpad-textarea');
+            if (!area.value.trim()) {
+                showToast('Scratchpad is empty', 'amber');
+                return;
+            }
+            area.select();
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+            showToast('Revision notes copied to clipboard', 'emerald');
+        }
+
+        function toggleCurrentItemFavorite() {
+            if (!state.activeItemId) return;
+            toggleFavorite(state.activeItemId);
+        }
+
+        function updateViewerBookmarkIcon(isBookmarked) {
+            const btn = document.getElementById('viewer-fav-btn');
+            if (isBookmarked) {
+                btn.className = 'p-2 rounded-xl border border-amber-200 bg-amber-50 text-amber-600 transition';
+            } else {
+                btn.className = 'p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 transition';
+            }
+        }
+
+        function deleteCurrentItem() {
+            if (!state.activeItemId) return;
+            const idx = state.items.findIndex(i => i.id === state.activeItemId);
+            if (idx === -1) return;
+
+            const deletedTitle = state.items[idx].title;
+            state.items.splice(idx, 1);
+            persistVaultToStorage();
+            closeViewerModal();
+            renderSidebar();
+            updateStats();
+            renderGrid();
+            showToast(`Removed "${deletedTitle}"`, 'slate');
+        }
+
+        // =========================================================================
+        // 8. UTILITIES
+        // =========================================================================
+
+        function showToast(message, tone = 'indigo') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const colors = {
+                emerald: 'bg-slate-900 text-white border-l-4 border-emerald-400',
+                amber: 'bg-slate-900 text-white border-l-4 border-amber-400',
+                indigo: 'bg-slate-900 text-white border-l-4 border-indigo-400',
+                slate: 'bg-slate-800 text-white border-l-4 border-slate-400'
+            };
+            toast.className = `pointer-events-auto px-4 py-3 rounded-xl shadow-lg text-xs font-medium flex items-center gap-2.5 transition-all duration-300 ${colors[tone] || colors.indigo}`;
+            toast.innerHTML = `<span>${escapeHtml(message)}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(8px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 2800);
+        }
+
+        function formatTime(sec) {
+            if (!isFinite(sec) || sec < 0) return '00:00';
+            const m = Math.floor(sec / 60);
+            const s = Math.floor(sec % 60);
+            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        function countWords(str) {
+            if (!str) return 0;
+            return str.trim().split(/\s+/).filter(Boolean).length;
+        }
+
+        function stripMarkdown(md) {
+            if (!md) return '';
+            return md.replace(/[#*`>_~\-\[\]\(\)]/g, ' ').replace(/\s+/g, ' ').trim();
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
