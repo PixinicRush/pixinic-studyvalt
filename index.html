@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pixinic StudyValt</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Firebase SDKs (Compat via CDN) -->
+    <!-- Firebase SDKs (Optional Cloud Sync) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <style>
@@ -29,7 +29,7 @@
                     Pixinic StudyValt
                     <span id="lock-badge" class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Unlocked</span>
                 </h1>
-                <p id="sync-status" class="text-xs text-slate-400">Cloud Sync Active</p>
+                <p id="sync-status" class="text-xs text-slate-400">Study Hub Active</p>
             </div>
         </div>
 
@@ -187,7 +187,7 @@
 
     <script>
         // ==========================================
-        // 1. // Import the functions you need from the SDKs you need
+        // // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 // TODO: Add SDKs for Firebase products that you want to use
@@ -208,7 +208,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
-
+        // 
         // ==========================================
         const firebaseConfig = {
             apiKey: "PASTE_YOUR_API_KEY_HERE",
@@ -223,16 +223,15 @@ const analytics = getAnalytics(app);
         let useCloud = false;
 
         try {
-            if (firebaseConfig.apiKey !== "PASTE_YOUR_API_KEY_HERE") {
+            if (typeof firebase !== 'undefined' && firebaseConfig.apiKey !== "PASTE_YOUR_API_KEY_HERE") {
                 firebase.initializeApp(firebaseConfig);
                 db = firebase.firestore();
                 useCloud = true;
-                document.getElementById('sync-status').innerText = 'Cloud Sync Connected (Firebase)';
-            } else {
-                document.getElementById('sync-status').innerText = 'Local Storage Mode (Add Firebase Config for Sync)';
+                const statusEl = document.getElementById('sync-status');
+                if (statusEl) statusEl.innerText = 'Cloud Sync Connected (Firebase)';
             }
         } catch (e) {
-            console.warn("Firebase init failed, falling back to local storage", e);
+            console.warn("Cloud sync inactive, using local storage mode.", e);
         }
 
         const defaultData = {
@@ -255,18 +254,15 @@ const analytics = getAnalytics(app);
         let pendingAction = null;
         let activeViewerItemId = null;
 
-        // Sync data storage
         function saveData() {
             localStorage.setItem('pixinic_studyvalt_data', JSON.stringify(appData));
             if (useCloud && db) {
-                db.collection('studyvalt').doc('main_data').set(appData)
-                  .catch(err => console.error("Cloud save error:", err));
+                db.collection('studyvalt').doc('main_data').set(appData).catch(err => console.error(err));
             }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             if (useCloud && db) {
-                // Listen for real-time updates from cloud across all devices
                 db.collection('studyvalt').doc('main_data').onSnapshot((doc) => {
                     if (doc.exists) {
                         appData = doc.data();
@@ -275,20 +271,24 @@ const analytics = getAnalytics(app);
                         updateSubjectHeader();
                         renderItems();
                     } else {
-                        // Initialize cloud with default data if empty
                         saveData();
                     }
-                });
+                }, err => console.log(err));
             }
 
             renderSubjects();
             updateSubjectHeader();
             renderItems();
-            document.getElementById('global-search').addEventListener('input', (e) => renderItems(e.target.value));
+            
+            const searchEl = document.getElementById('global-search');
+            if (searchEl) {
+                searchEl.addEventListener('input', (e) => renderItems(e.target.value));
+            }
         });
 
         function renderSubjects() {
             const listEl = document.getElementById('subject-list');
+            if (!listEl) return;
             listEl.innerHTML = '';
             appData.subjects.forEach(sub => {
                 const isActive = sub.id === currentSubjectId;
@@ -322,13 +322,16 @@ const analytics = getAnalytics(app);
             currentCategory = cat;
             ['notes', 'video', 'audio'].forEach(c => {
                 const btn = document.getElementById(`cat-${c}-btn`);
-                btn.className = c === cat ? "px-4 py-2 rounded-lg text-xs font-semibold bg-cyan-500 text-slate-950 shadow" : "px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white";
+                if (btn) {
+                    btn.className = c === cat ? "px-4 py-2 rounded-lg text-xs font-semibold bg-cyan-500 text-slate-950 shadow" : "px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white";
+                }
             });
             renderItems();
         }
 
         function renderItems(searchQuery = '') {
             const gridEl = document.getElementById('items-grid');
+            if (!gridEl) return;
             gridEl.innerHTML = '';
             let filtered = appData.materials.filter(m => m.subjectId === currentSubjectId && m.type === currentCategory);
             if (searchQuery.trim() !== '') {
@@ -358,7 +361,9 @@ const analytics = getAnalytics(app);
 
         function checkPasswordState(action) {
             pendingAction = action;
-            if (isUnlocked) { executePendingAction(); } else {
+            if (isUnlocked) { 
+                executePendingAction(); 
+            } else {
                 document.getElementById('password-input').value = '';
                 document.getElementById('password-error').classList.add('hidden');
                 document.getElementById('password-modal').classList.remove('hidden');
@@ -373,7 +378,8 @@ const analytics = getAnalytics(app);
         }
 
         function verifyPassword() {
-            if (document.getElementById('password-input').value === 'JENIL') {
+            const pwd = document.getElementById('password-input').value;
+            if (pwd === 'JENIL') {
                 isUnlocked = true;
                 document.getElementById('lock-badge').innerText = 'Unlocked';
                 document.getElementById('lock-toggle-btn').innerText = 'Lock Now';
