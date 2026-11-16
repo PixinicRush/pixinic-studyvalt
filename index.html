@@ -3,2013 +3,451 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pixinic StudyValt — Personal Study Hub</title>
-    <!-- Tailwind CSS -->
+    <title>Pixinic StudyValt</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter & Newsreader -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
-                        serif: ['Newsreader', 'Georgia', 'serif'],
-                    },
-                    colors: {
-                        cream: '#FAF9F6',
-                        slatebg: '#F4F5F7',
-                    }
-                }
-            }
-        }
-    </script>
-
     <style>
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 9999px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
-
-        .prose-academic h1 { font-family: 'Newsreader', Georgia, serif; font-size: 1.75rem; font-weight: 600; color: #0F172A; margin: 1.25rem 0 0.65rem; }
-        .prose-academic h2 { font-family: 'Newsreader', Georgia, serif; font-size: 1.35rem; font-weight: 600; color: #1E293B; margin: 1.1rem 0 0.5rem; }
-        .prose-academic h3 { font-size: 1.08rem; font-weight: 600; color: #334155; margin: 0.9rem 0 0.35rem; }
-        .prose-academic p { font-size: 0.98rem; line-height: 1.75; color: #334155; margin-bottom: 0.9rem; }
-        .prose-academic ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 0.9rem; color: #334155; }
-        .prose-academic ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 0.9rem; color: #334155; }
-        .prose-academic li { margin-bottom: 0.3rem; line-height: 1.65; }
-        .prose-academic blockquote { border-left: 3px solid #4338CA; padding: 0.5rem 1rem; font-style: italic; color: #475569; background: #EEF2FF; border-radius: 0 0.5rem 0.5rem 0; margin-bottom: 0.9rem; }
-        .prose-academic code { background: #F1F5F9; color: #BE185D; padding: 0.15rem 0.4rem; border-radius: 0.35rem; font-size: 0.85rem; }
-        .prose-academic pre { background: #0F172A; color: #F8FAFC; padding: 1rem; border-radius: 0.75rem; overflow-x: auto; margin-bottom: 1rem; }
-        .prose-academic pre code { background: transparent; color: inherit; padding: 0; }
-
-        @keyframes eqBar {
-            0%, 100% { height: 22%; }
-            50% { height: 95%; }
-        }
-        .eq-playing .eq-bar-1 { animation: eqBar 0.7s ease-in-out infinite; }
-        .eq-playing .eq-bar-2 { animation: eqBar 0.5s ease-in-out infinite 0.15s; }
-        .eq-playing .eq-bar-3 { animation: eqBar 0.8s ease-in-out infinite 0.3s; }
-        .eq-playing .eq-bar-4 { animation: eqBar 0.6s ease-in-out infinite 0.1s; }
-        .eq-playing .eq-bar-5 { animation: eqBar 0.75s ease-in-out infinite 0.25s; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
     </style>
 </head>
-<body class="bg-cream text-slate-800 font-sans antialiased selection:bg-indigo-100 selection:text-indigo-900 overflow-x-hidden">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-cyan-500 selection:text-slate-950">
 
-    <!-- Toast Notification Container -->
-    <div id="toast-container" class="fixed bottom-5 right-5 z-[100] flex flex-col gap-2 pointer-events-none"></div>
+    <!-- Top Navigation Header -->
+    <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-40 px-4 lg:px-8 py-3 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 text-slate-950 font-extrabold text-xl">
+                P
+            </div>
+            <div>
+                <h1 class="font-bold text-lg text-slate-100 tracking-tight flex items-center gap-2">
+                    Pixinic StudyValt
+                    <span id="lock-badge" class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Unlocked</span>
+                </h1>
+                <p class="text-xs text-slate-400">Secure Personal Study Hub</p>
+            </div>
+        </div>
 
-    <!-- Main App Shell -->
-    <div class="min-h-screen flex flex-col lg:flex-row">
+        <div class="flex items-center space-x-3">
+            <div class="relative hidden sm:block">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </span>
+                <input type="text" id="global-search" placeholder="Search notes, videos, audio..." class="bg-slate-950 text-slate-200 text-sm rounded-xl pl-9 pr-4 py-2 border border-slate-800 focus:outline-none focus:border-cyan-500 w-64 transition">
+            </div>
 
-        <!-- Mobile Top Header -->
-        <header class="lg:hidden bg-white border-b border-slate-200/90 px-4 py-3 flex items-center justify-between sticky top-0 z-30">
-            <div class="flex items-center gap-2.5">
-                <button type="button" id="mobile-menu-btn" aria-label="Open menu" class="p-2 rounded-xl text-slate-600 hover:bg-slate-100 active:bg-slate-200 transition">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            <button onclick="handleUploadClick()" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-semibold px-4 py-2 rounded-xl text-sm shadow-lg shadow-cyan-500/20 transition flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                Upload Material
+            </button>
+
+            <button onclick="toggleLockState()" id="lock-toggle-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2 rounded-xl text-xs font-medium border border-slate-700 transition">
+                Lock
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
+        
+        <!-- Sidebar -->
+        <aside class="w-full md:w-72 bg-slate-900/50 border-r border-slate-800 flex flex-col p-4 space-y-4">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Subject Spaces</span>
+                <button onclick="handleCreateTabClick()" class="text-cyan-400 hover:text-cyan-300 text-xs font-semibold flex items-center gap-1 bg-cyan-500/10 px-2.5 py-1 rounded-lg border border-cyan-500/20 transition">
+                    + Create Tab
                 </button>
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-xl bg-indigo-700 flex items-center justify-center text-white shadow-xs">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                    </div>
-                    <span class="font-serif font-semibold text-lg tracking-tight text-slate-900">Pixinic StudyValt</span>
-                </div>
             </div>
-            <div class="flex items-center gap-1.5">
-                <button type="button" data-action="create-tab" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold px-2.5 py-2 rounded-xl flex items-center gap-1 transition">
-                    <svg class="w-3.5 h-3.5 text-indigo-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10v6"/><path d="M9 13h6"/><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
-                    <span class="hidden sm:inline">+ Create Tab</span>
-                </button>
-                <button type="button" data-action="upload" class="bg-indigo-700 hover:bg-indigo-800 text-white text-xs sm:text-sm font-medium px-3 py-2 rounded-xl flex items-center gap-1.5 shadow-xs transition">
-                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                    <span>Upload</span>
-                </button>
-            </div>
-        </header>
-
-        <!-- Sidebar Backdrop for Mobile -->
-        <div id="sidebar-backdrop" class="fixed inset-0 bg-slate-900/40 z-30 hidden lg:hidden"></div>
-
-        <!-- Left Sidebar -->
-        <aside id="sidebar" class="fixed lg:sticky top-0 left-0 z-40 h-screen w-72 bg-white border-r border-slate-200/90 flex flex-col justify-between transition-transform duration-200 -translate-x-full lg:translate-x-0 shrink-0">
-            <div class="p-5 overflow-y-auto flex-1">
-                <!-- Brand Header -->
-                <div class="flex items-center justify-between mb-5">
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-700 to-indigo-900 flex items-center justify-center text-white shadow-sm">
-                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 6 4 14"/><path d="M12 6v14"/><path d="M8 8v12"/><path d="M4 4v16"/></svg>
-                        </div>
-                        <div>
-                            <h1 class="font-serif font-semibold text-lg leading-tight text-slate-900">Pixinic StudyValt</h1>
-                            <p class="text-[10px] font-semibold text-indigo-600 tracking-wider uppercase mt-0.5">Personal Study Space</p>
-                        </div>
-                    </div>
-                    <button type="button" id="mobile-close-btn" aria-label="Close menu" class="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    </button>
-                </div>
-
-                <!-- Creator Lock / Unlock Status Badge -->
-                <div id="admin-status-banner" class="mb-4 px-3 py-2.5 rounded-xl bg-slate-100 border border-slate-200/90 flex items-center justify-between text-xs">
-                    <div class="flex items-center gap-2 font-medium" id="admin-status-label-wrap">
-                        <span id="admin-status-icon-wrap" class="text-amber-600">
-                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                        </span>
-                        <span id="admin-status-text" class="text-slate-700">Upload Locked</span>
-                    </div>
-                    <button type="button" id="admin-status-action" class="text-[11px] font-bold text-indigo-700 hover:underline px-1.5 py-0.5 rounded">
-                        Unlock
-                    </button>
-                </div>
-
-                <!-- Password-Protected Primary Buttons -->
-                <div class="space-y-2 mb-6">
-                    <button type="button" data-action="upload" class="w-full bg-indigo-700 hover:bg-indigo-800 active:scale-[0.99] text-white font-semibold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-xs transition text-sm">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                        <span>Upload Material</span>
-                        <svg class="w-3 h-3 opacity-80 admin-btn-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                    </button>
-
-                    <button type="button" data-action="create-tab" class="w-full bg-white hover:bg-indigo-50/80 text-indigo-900 border border-indigo-200 font-semibold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 transition text-sm">
-                        <svg class="w-4 h-4 text-indigo-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10v6"/><path d="M9 13h6"/><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
-                        <span>+ Create Tab</span>
-                        <svg class="w-3 h-3 text-indigo-400 admin-btn-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                    </button>
-                </div>
-
-                <!-- Library Overview -->
-                <div class="mb-6">
-                    <p class="px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">Workspace</p>
-                    <nav class="space-y-1" id="library-nav">
-                        <button type="button" data-subject="All" class="subject-nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition bg-indigo-50 text-indigo-800">
-                            <span class="flex items-center gap-2.5">
-                                <svg class="w-4 h-4 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-                                All Materials
-                            </span>
-                            <span id="count-all" class="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700">0</span>
-                        </button>
-                        <button type="button" data-subject="Favorites" class="subject-nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition">
-                            <span class="flex items-center gap-2.5">
-                                <svg class="w-4 h-4 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
-                                Bookmarked
-                            </span>
-                            <span id="count-fav" class="text-xs font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">0</span>
-                        </button>
-                    </nav>
-                </div>
-
-                <!-- Subject Tabs -->
-                <div>
-                    <div class="flex items-center justify-between px-3 mb-2">
-                        <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Subject Tabs</p>
-                        <button type="button" data-action="create-tab" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition">
-                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                            <span>Create Tab</span>
-                        </button>
-                    </div>
-                    <nav class="space-y-1" id="subjects-list"></nav>
-                </div>
-            </div>
-
-            <!-- Vault Summary Footer -->
-            <div class="p-4 border-t border-slate-100 bg-slate-50/80">
-                <div class="flex items-center justify-between text-xs text-slate-500 mb-2">
-                    <span class="font-medium text-slate-700">Vault Summary</span>
-                    <span id="total-items-badge" class="text-emerald-700 font-semibold">0 Items</span>
-                </div>
-                <div class="grid grid-cols-3 gap-1.5 text-center">
-                    <div class="bg-white border border-slate-200/80 rounded-lg py-1.5 px-1">
-                        <div id="stat-notes" class="text-xs font-bold text-indigo-700">0</div>
-                        <div class="text-[10px] text-slate-400">Notes</div>
-                    </div>
-                    <div class="bg-white border border-slate-200/80 rounded-lg py-1.5 px-1">
-                        <div id="stat-videos" class="text-xs font-bold text-emerald-700">0</div>
-                        <div class="text-[10px] text-slate-400">Videos</div>
-                    </div>
-                    <div class="bg-white border border-slate-200/80 rounded-lg py-1.5 px-1">
-                        <div id="stat-audio" class="text-xs font-bold text-amber-700">0</div>
-                        <div class="text-[10px] text-slate-400">Audio</div>
-                    </div>
-                </div>
-            </div>
+            <div id="subject-list" class="space-y-1 overflow-y-auto max-h-[calc(100vh-16rem)] custom-scrollbar"></div>
         </aside>
 
-        <!-- Main Workspace -->
-        <main class="flex-1 flex flex-col min-w-0">
-            <!-- Top Header & Subject Space Tabs -->
-            <div class="bg-cream/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-20 px-4 sm:px-8 pt-4 pb-0">
-                <div class="max-w-7xl mx-auto">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4">
-                        <div>
-                            <div class="flex flex-wrap items-center gap-2.5">
-                                <span id="subject-space-badge" class="hidden px-2.5 py-0.5 rounded-lg text-[11px] font-bold uppercase tracking-wider bg-indigo-100 text-indigo-800">Subject Space</span>
-                                <h2 id="current-view-title" class="font-serif text-2xl sm:text-3xl font-semibold text-slate-900">Pixinic StudyValt — All Materials</h2>
-                                <span id="filtered-count-pill" class="text-xs font-semibold bg-slate-200/80 text-slate-700 px-2.5 py-0.5 rounded-full">0</span>
-                            </div>
-                            <p id="current-view-subtitle" class="text-xs text-slate-500 mt-1">Select a subject tab on the left or switch between Notes, Video, and Audio below.</p>
-                        </div>
-
-                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-                            <div class="relative flex-1 sm:w-64">
-                                <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                                <input type="text" id="search-input" placeholder="Search title, tags, notes..." class="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition">
-                            </div>
-                            <button type="button" data-action="upload" class="bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-semibold px-3.5 py-2.5 rounded-xl flex items-center justify-center gap-1.5 shadow-2xs transition shrink-0">
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                                <span id="quick-upload-btn-label">Upload Material</span>
-                            </button>
-                            <button type="button" id="delete-subject-btn" class="hidden bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 text-xs font-semibold px-3 py-2.5 rounded-xl items-center justify-center gap-1 transition shrink-0" title="Delete this Subject Tab">
-                                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                                <span>Delete Tab</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Dedicated Subject Sub-Tabs: Notes, Video, Audio, All Formats -->
-                    <div class="flex items-center justify-between gap-2 overflow-x-auto pt-1">
-                        <div class="flex items-center gap-1.5 sm:gap-2" id="subject-media-tabs">
-                            <button type="button" data-type="note" class="type-filter-btn px-4 py-2.5 rounded-t-xl border-b-2 border-transparent text-xs sm:text-sm font-medium text-slate-600 hover:text-indigo-700 hover:bg-white/60 transition flex items-center gap-2 shrink-0">
-                                <svg class="w-4 h-4 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                                <span>Notes</span>
-                                <span id="tab-count-note" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700">0</span>
-                            </button>
-
-                            <button type="button" data-type="video" class="type-filter-btn px-4 py-2.5 rounded-t-xl border-b-2 border-transparent text-xs sm:text-sm font-medium text-slate-600 hover:text-emerald-700 hover:bg-white/60 transition flex items-center gap-2 shrink-0">
-                                <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-                                <span>Video</span>
-                                <span id="tab-count-video" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">0</span>
-                            </button>
-
-                            <button type="button" data-type="audio" class="type-filter-btn px-4 py-2.5 rounded-t-xl border-b-2 border-transparent text-xs sm:text-sm font-medium text-slate-600 hover:text-amber-700 hover:bg-white/60 transition flex items-center gap-2 shrink-0">
-                                <svg class="w-4 h-4 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
-                                <span>Audio</span>
-                                <span id="tab-count-audio" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">0</span>
-                            </button>
-
-                            <button type="button" data-type="all" class="type-filter-btn px-4 py-2.5 rounded-t-xl border-b-2 border-indigo-700 bg-white text-indigo-900 text-xs sm:text-sm font-semibold transition flex items-center gap-2 shrink-0 shadow-2xs">
-                                <svg class="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-                                <span>All Formats</span>
-                                <span id="tab-count-all" class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">0</span>
-                            </button>
-                        </div>
-                    </div>
+        <!-- Main Content -->
+        <main class="flex-1 bg-slate-950 p-4 lg:p-8 overflow-y-auto custom-scrollbar">
+            <div class="bg-gradient-to-r from-slate-900 to-slate-900/60 border border-slate-800 rounded-2xl p-6 mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                    <span id="current-subject-badge" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 uppercase tracking-wide">Computer Science</span>
+                    <h2 id="current-subject-title" class="text-2xl font-bold text-white mt-2 tracking-tight">Computer Science</h2>
+                    <p id="current-subject-desc" class="text-sm text-slate-400 mt-1">Manage notes, video lectures, and audio summaries for this subject.</p>
                 </div>
-            </div>
 
-            <!-- Cards Grid Container -->
-            <div class="flex-1 px-4 sm:px-8 py-6 max-w-7xl w-full mx-auto">
-                <div id="materials-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div>
-
-                <!-- Empty State -->
-                <div id="empty-state" class="hidden flex-col items-center justify-center py-20 text-center">
-                    <div class="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4">
-                        <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                    </div>
-                    <h3 id="empty-state-title" class="font-serif text-xl font-semibold text-slate-900 mb-1">No study materials in this section yet</h3>
-                    <p id="empty-state-desc" class="text-sm text-slate-500 max-w-md mb-5">Upload your notes, lecture videos, or audio recordings directly into this subject tab.</p>
-                    <button type="button" data-action="upload" class="bg-indigo-700 hover:bg-indigo-800 text-white text-sm font-medium px-4 py-2.5 rounded-xl inline-flex items-center gap-2 transition">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                        <span>Upload Study Material</span>
+                <div class="flex bg-slate-950 p-1.5 rounded-xl border border-slate-800">
+                    <button onclick="switchCategory('notes')" id="cat-notes-btn" class="px-4 py-2 rounded-lg text-xs font-semibold transition bg-cyan-500 text-slate-950 shadow">
+                        Notes (<span id="count-notes">0</span>)
+                    </button>
+                    <button onclick="switchCategory('video')" id="cat-video-btn" class="px-4 py-2 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white">
+                        Video (<span id="count-video">0</span>)
+                    </button>
+                    <button onclick="switchCategory('audio')" id="cat-audio-btn" class="px-4 py-2 rounded-lg text-xs font-semibold transition text-slate-400 hover:text-white">
+                        Audio (<span id="count-audio">0</span>)
                     </button>
                 </div>
             </div>
+
+            <div id="items-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"></div>
         </main>
     </div>
 
-    <!-- ===================================================================== -->
-    <!-- MODAL 1: CREATOR PASSWORD VERIFICATION ("JENIL")                      -->
-    <!-- ===================================================================== -->
-    <div id="password-modal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
-        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden">
-            <div class="px-6 py-4 bg-cream border-b border-slate-100 flex items-center justify-between">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-                    </div>
-                    <div>
-                        <h3 class="font-serif font-semibold text-lg text-slate-900">Creator Verification</h3>
-                        <p class="text-xs text-slate-500">Pixinic StudyValt Admin Access</p>
-                    </div>
-                </div>
-                <button type="button" id="close-password-btn" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
+    <!-- Password Modal -->
+    <div id="password-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md shadow-2xl space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">Password Required</h3>
+                <button onclick="closePasswordModal()" class="text-slate-400 hover:text-white">&times;</button>
             </div>
-
-            <form id="password-form" class="p-6 space-y-4">
-                <p class="text-xs text-slate-600 leading-relaxed">
-                    Only the creator can create new subject tabs, upload study materials, or delete items. Enter your creator password to continue.
-                </p>
-
-                <div>
-                    <label for="admin-password-input" class="block text-xs font-semibold text-slate-700 mb-1.5">Creator Password</label>
-                    <input type="password" id="admin-password-input" required autocomplete="off" placeholder="Enter password..." class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500/15">
-                    <p id="password-error-msg" class="hidden text-xs font-medium text-rose-600 mt-1.5">
-                        Incorrect password. Password is case-sensitive.
-                    </p>
-                </div>
-
-                <label class="flex items-center gap-2 cursor-pointer select-none">
-                    <input type="checkbox" id="remember-session-checkbox" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
-                    <span class="text-xs text-slate-600">Keep unlocked for this browser session</span>
-                </label>
-
-                <div class="pt-2 flex items-center justify-end gap-2.5">
-                    <button type="button" id="cancel-password-btn" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition">Cancel</button>
-                    <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-semibold bg-indigo-700 hover:bg-indigo-800 text-white shadow-xs transition flex items-center gap-1.5">
-                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
-                        <span>Verify & Continue</span>
-                    </button>
-                </div>
-            </form>
+            <p class="text-sm text-slate-400">Please enter the creator password (JENIL) to proceed.</p>
+            <input type="password" id="password-input" placeholder="Enter password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 focus:outline-none focus:border-cyan-500 transition">
+            <p id="password-error" class="text-xs text-rose-400 hidden">Incorrect password. Please try again.</p>
+            <div class="flex justify-end space-x-3 pt-2">
+                <button onclick="closePasswordModal()" class="px-4 py-2 rounded-xl text-sm bg-slate-800 text-slate-300">Cancel</button>
+                <button onclick="verifyPassword()" class="px-5 py-2 rounded-xl text-sm bg-cyan-500 text-slate-950 font-semibold">Verify</button>
+            </div>
         </div>
     </div>
 
-    <!-- ===================================================================== -->
-    <!-- MODAL 2: CREATE SUBJECT TAB MODAL                                     -->
-    <!-- ===================================================================== -->
-    <div id="create-subject-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden">
-            <div class="px-6 py-4 bg-cream border-b border-slate-100 flex items-center justify-between">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center">
-                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10v6"/><path d="M9 13h6"/><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
-                    </div>
-                    <div>
-                        <h3 class="font-serif font-semibold text-lg text-slate-900">Create Subject Tab</h3>
-                        <p class="text-xs text-slate-500">Dedicated space with Notes, Video & Audio tabs</p>
-                    </div>
-                </div>
-                <button type="button" id="close-create-subject-btn" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
+    <!-- Create Subject Modal -->
+    <div id="create-tab-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md shadow-2xl space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-bold text-white">Create New Subject Tab</h3>
+                <button onclick="closeCreateTabModal()" class="text-slate-400 hover:text-white">&times;</button>
             </div>
-
-            <form id="create-subject-form" class="p-6 space-y-4">
-                <div>
-                    <label for="create-subject-name" class="block text-xs font-semibold text-slate-700 mb-1.5">Subject Name *</label>
-                    <input type="text" id="create-subject-name" required placeholder="e.g., Physics, Mathematics, Economics" class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10">
-                </div>
-
-                <div>
-                    <label for="create-subject-desc" class="block text-xs font-semibold text-slate-700 mb-1.5">Subject Description <span class="text-slate-400 font-normal">(optional)</span></label>
-                    <input type="text" id="create-subject-desc" placeholder="e.g., Semester 4 lectures, lab notes & audio summaries" class="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-2">Tab Accent Color</label>
-                    <div class="flex items-center gap-2.5">
-                        <label class="cursor-pointer"><input type="radio" name="subjectColor" value="bg-indigo-500" checked class="sr-only peer"><span class="w-7 h-7 rounded-full bg-indigo-500 block ring-offset-2 peer-checked:ring-2 peer-checked:ring-indigo-600 transition"></span></label>
-                        <label class="cursor-pointer"><input type="radio" name="subjectColor" value="bg-emerald-500" class="sr-only peer"><span class="w-7 h-7 rounded-full bg-emerald-500 block ring-offset-2 peer-checked:ring-2 peer-checked:ring-emerald-600 transition"></span></label>
-                        <label class="cursor-pointer"><input type="radio" name="subjectColor" value="bg-amber-500" class="sr-only peer"><span class="w-7 h-7 rounded-full bg-amber-500 block ring-offset-2 peer-checked:ring-2 peer-checked:ring-amber-600 transition"></span></label>
-                        <label class="cursor-pointer"><input type="radio" name="subjectColor" value="bg-rose-500" class="sr-only peer"><span class="w-7 h-7 rounded-full bg-rose-500 block ring-offset-2 peer-checked:ring-2 peer-checked:ring-rose-600 transition"></span></label>
-                        <label class="cursor-pointer"><input type="radio" name="subjectColor" value="bg-purple-500" class="sr-only peer"><span class="w-7 h-7 rounded-full bg-purple-500 block ring-offset-2 peer-checked:ring-2 peer-checked:ring-purple-600 transition"></span></label>
-                        <label class="cursor-pointer"><input type="radio" name="subjectColor" value="bg-cyan-600" class="sr-only peer"><span class="w-7 h-7 rounded-full bg-cyan-600 block ring-offset-2 peer-checked:ring-2 peer-checked:ring-cyan-600 transition"></span></label>
-                    </div>
-                </div>
-
-                <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
-                    <button type="button" id="cancel-create-subject-btn" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition">Cancel</button>
-                    <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-semibold bg-indigo-700 hover:bg-indigo-800 text-white shadow-xs transition">
-                        Create Subject Tab
-                    </button>
-                </div>
-            </form>
+            <div class="space-y-3">
+                <input type="text" id="new-subject-name" placeholder="Subject Name (e.g. Physics)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:border-cyan-500 text-sm">
+                <input type="text" id="new-subject-desc" placeholder="Brief description" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:border-cyan-500 text-sm">
+            </div>
+            <div class="flex justify-end space-x-3 pt-2">
+                <button onclick="closeCreateTabModal()" class="px-4 py-2 rounded-xl text-sm bg-slate-800 text-slate-300">Cancel</button>
+                <button onclick="saveNewSubjectTab()" class="px-5 py-2 rounded-xl text-sm bg-cyan-500 text-slate-950 font-semibold">Create</button>
+            </div>
         </div>
     </div>
 
-    <!-- ===================================================================== -->
-    <!-- MODAL 3: GUIDED UPLOAD MODAL                                          -->
-    <!-- ===================================================================== -->
-    <div id="upload-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs">
-        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-2xl max-h-[92vh] flex flex-col overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-cream">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                    </div>
-                    <div>
-                        <h3 class="font-serif font-semibold text-lg text-slate-900">Upload to Pixinic StudyValt</h3>
-                        <p class="text-xs text-slate-500">Choose your Subject Tab and format (Notes, Video, or Audio)</p>
-                    </div>
-                </div>
-                <button type="button" id="close-upload-btn" class="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
+    <!-- Upload Modal -->
+    <div id="upload-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-lg shadow-2xl space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-bold text-white">Upload Study Material</h3>
+                <button onclick="closeUploadModal()" class="text-slate-400 hover:text-white">&times;</button>
             </div>
-
-            <form id="upload-form" class="p-6 overflow-y-auto space-y-5 flex-1">
-                <!-- STEP 1: Choose Subject Tab -->
-                <div class="bg-slate-50 border border-slate-200/90 rounded-2xl p-4">
-                    <label for="upload-subject" class="block text-xs font-bold uppercase tracking-wider text-indigo-800 mb-2">
-                        Step 1: Which Subject Tab do you want to upload into? *
-                    </label>
-                    <div class="flex gap-2">
-                        <select id="upload-subject" required class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm font-medium bg-white text-slate-900 focus:outline-none focus:border-indigo-500"></select>
-                        <button type="button" id="toggle-inline-subject-btn" class="px-3.5 rounded-xl border border-slate-300 bg-white hover:bg-indigo-50 text-indigo-700 font-semibold text-xs flex items-center gap-1 shrink-0 transition">
-                            <span>+ New Tab</span>
-                        </button>
-                    </div>
-                    <input type="text" id="upload-new-subject" placeholder="Type new subject tab name..." class="hidden mt-2.5 w-full rounded-xl border border-indigo-300 bg-white px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
-                </div>
-
-                <!-- STEP 2: Choose Format (Notes, Video, Audio) -->
+            <div class="space-y-3">
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-indigo-800 mb-2">
-                        Step 2: Which option do you want to upload? *
-                    </label>
-                    <div class="grid grid-cols-3 gap-3">
-                        <label class="cursor-pointer">
-                            <input type="radio" name="materialType" value="note" checked class="peer sr-only">
-                            <div class="p-3.5 rounded-xl border-2 border-slate-200 peer-checked:border-indigo-600 peer-checked:bg-indigo-50/70 hover:bg-slate-50 transition flex flex-col items-center gap-1.5 text-center">
-                                <div class="w-9 h-9 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center">
-                                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                                </div>
-                                <span class="text-xs sm:text-sm font-bold text-slate-900">Notes</span>
-                                <span class="text-[10px] text-slate-500">Markdown, TXT, PDF</span>
-                            </div>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="materialType" value="video" class="peer sr-only">
-                            <div class="p-3.5 rounded-xl border-2 border-slate-200 peer-checked:border-emerald-600 peer-checked:bg-emerald-50/70 hover:bg-slate-50 transition flex flex-col items-center gap-1.5 text-center">
-                                <div class="w-9 h-9 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
-                                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-                                </div>
-                                <span class="text-xs sm:text-sm font-bold text-slate-900">Video</span>
-                                <span class="text-[10px] text-slate-500">MP4, YouTube, Drive</span>
-                            </div>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="materialType" value="audio" class="peer sr-only">
-                            <div class="p-3.5 rounded-xl border-2 border-slate-200 peer-checked:border-amber-600 peer-checked:bg-amber-50/70 hover:bg-slate-50 transition flex flex-col items-center gap-1.5 text-center">
-                                <div class="w-9 h-9 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center">
-                                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
-                                </div>
-                                <span class="text-xs sm:text-sm font-bold text-slate-900">Audio</span>
-                                <span class="text-[10px] text-slate-500">MP3, Link or Record</span>
-                            </div>
-                        </label>
-                    </div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Select Subject Tab</label>
+                    <select id="upload-subject-select" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 text-sm"></select>
                 </div>
-
-                <!-- Title & Tags -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label for="upload-title" class="block text-xs font-semibold text-slate-700 mb-1.5">Study Title *</label>
-                        <input type="text" id="upload-title" required placeholder="e.g., Chapter 4 Lecture Notes" class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500">
-                    </div>
-                    <div>
-                        <label for="upload-tags" class="block text-xs font-semibold text-slate-700 mb-1.5">Tags <span class="text-slate-400 font-normal">(comma separated)</span></label>
-                        <input type="text" id="upload-tags" placeholder="e.g., exam-prep, lecture-1, revision" class="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:outline-none focus:border-indigo-500">
-                    </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Material Type</label>
+                    <select id="upload-type-select" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 text-sm">
+                        <option value="notes">Notes / PDF Text</option>
+                        <option value="video">Video (YouTube Link or MP4 URL)</option>
+                        <option value="audio">Audio (MP3 URL or Voice Link)</option>
+                    </select>
                 </div>
-
-                <!-- NOTE INPUT SECTION -->
-                <div id="note-input-section" class="space-y-3">
-                    <div class="flex items-center justify-between">
-                        <label for="upload-note-content" class="text-xs font-semibold text-slate-700">Note Content (Markdown Supported)</label>
-                        <label class="cursor-pointer text-xs font-semibold text-indigo-700 hover:text-indigo-900 flex items-center gap-1 bg-indigo-50 px-2.5 py-1 rounded-lg">
-                            <span>Import .txt / .md / .pdf</span>
-                            <input type="file" id="note-file-input" accept=".txt,.md,.markdown,.pdf" class="hidden">
-                        </label>
-                    </div>
-                    <div id="note-file-badge" class="hidden items-center justify-between bg-indigo-50 border border-indigo-200 rounded-xl px-3.5 py-2 text-xs text-indigo-800">
-                        <span id="note-file-name" class="font-medium truncate">document.pdf</span>
-                        <button type="button" id="clear-note-file-btn" class="text-indigo-700 hover:text-indigo-950 font-semibold ml-2">Remove</button>
-                    </div>
-                    <textarea id="upload-note-content" rows="5" placeholder="# Key Concepts&#10;&#10;Write or paste your study notes here..." class="w-full rounded-xl border border-slate-200 p-3.5 text-sm font-mono focus:outline-none focus:border-indigo-500"></textarea>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Title</label>
+                    <input type="text" id="upload-title" placeholder="e.g. Chapter 1 Summary" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 text-sm">
                 </div>
-
-                <!-- VIDEO / AUDIO INPUT SECTION -->
-                <div id="media-file-section" class="hidden space-y-3">
-                    <div class="flex items-center justify-between">
-                        <label class="block text-xs font-semibold text-slate-700" id="media-file-label">Upload Video File</label>
-                        <button type="button" id="toggle-recorder-btn" class="hidden text-xs font-semibold text-amber-800 bg-amber-100 hover:bg-amber-200 px-2.5 py-1 rounded-lg items-center gap-1.5 transition">
-                            <span>Record Voice Note</span>
-                        </button>
-                    </div>
-
-                    <!-- Inline Browser Audio Recorder -->
-                    <div id="inline-audio-recorder" class="hidden bg-amber-50/90 border border-amber-200 rounded-2xl p-4 space-y-2.5">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-amber-900 flex items-center gap-1.5">
-                                <span id="rec-dot" class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
-                                <span id="rec-status-text">Ready to record microphone audio</span>
-                            </span>
-                            <span id="rec-timer" class="text-xs font-mono font-bold text-amber-900">00:00</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <button type="button" id="btn-start-rec" class="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold transition">Start Recording</button>
-                            <button type="button" id="btn-stop-rec" disabled class="px-3 py-1.5 rounded-xl bg-slate-800 disabled:opacity-40 text-white text-xs font-semibold transition">Stop & Attach</button>
-                        </div>
-                    </div>
-
-                    <!-- Local File Dropzone -->
-                    <div id="media-dropzone-box" class="border-2 border-dashed border-slate-300 hover:border-indigo-500 rounded-2xl p-5 text-center bg-slate-50/70 transition cursor-pointer">
-                        <input type="file" id="media-file-input" accept="video/*" class="hidden">
-                        <div id="media-dropzone-placeholder">
-                            <p class="text-sm font-medium text-slate-800">Click to select a local file from your device</p>
-                            <p id="media-format-hint" class="text-xs text-slate-400 mt-1">Supports MP4, WebM, MOV</p>
-                        </div>
-                        <div id="media-file-selected" class="hidden items-center justify-center gap-3">
-                            <div class="text-left min-w-0">
-                                <p id="selected-media-name" class="text-sm font-semibold text-emerald-800 truncate max-w-xs">lecture.mp4</p>
-                                <p id="selected-media-size" class="text-xs text-slate-500">Ready for playback</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- External URL Input (YouTube, Google Drive, MP4/MP3 link) -->
-                    <div>
-                        <label for="upload-media-url" id="media-url-label" class="block text-xs font-semibold text-slate-700 mb-1">Or paste Video Link (YouTube, Google Drive, or direct .mp4 URL)</label>
-                        <input type="url" id="upload-media-url" placeholder="https://www.youtube.com/watch?v=... or Google Drive link" class="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
-                    </div>
-
-                    <div>
-                        <label for="upload-media-desc" class="block text-xs font-semibold text-slate-700 mb-1">Summary / Description</label>
-                        <input type="text" id="upload-media-desc" placeholder="Brief summary of topics covered..." class="w-full rounded-xl border border-slate-200 px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
-                    </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Paste URL / Notes Text / Embed Link</label>
+                    <textarea id="upload-content" rows="3" placeholder="Paste YouTube link, audio link, or notes content here..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-100 text-sm"></textarea>
                 </div>
-
-                <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">
-                    <button type="button" id="cancel-upload-btn" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition">Cancel</button>
-                    <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-indigo-700 hover:bg-indigo-800 text-white shadow-xs transition">
-                        Save to Pixinic StudyValt
-                    </button>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Or Upload File (PDF / MP3 / MP4)</label>
+                    <input type="file" id="upload-file-input" class="w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-cyan-500 file:text-slate-950 hover:file:bg-cyan-400">
                 </div>
-            </form>
+            </div>
+            <div class="flex justify-end space-x-3 pt-2">
+                <button onclick="closeUploadModal()" class="px-4 py-2 rounded-xl text-sm bg-slate-800 text-slate-300">Cancel</button>
+                <button onclick="submitUploadMaterial()" class="px-5 py-2 rounded-xl text-sm bg-cyan-500 text-slate-950 font-semibold">Upload</button>
+            </div>
         </div>
     </div>
 
-    <!-- ===================================================================== -->
-    <!-- MODAL 4: SPLIT-PANE STUDY VIEWER & REVISION SCRATCHPAD                -->
-    <!-- ===================================================================== -->
-    <div id="viewer-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs p-0 sm:p-4 lg:p-6 items-center justify-center">
-        <div class="bg-white w-full h-full sm:rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden max-w-7xl">
-            <!-- Top Bar -->
-            <div class="px-4 sm:px-6 py-3.5 bg-cream border-b border-slate-200 flex items-center justify-between gap-4 shrink-0">
-                <div class="flex items-center gap-3 min-w-0">
-                    <span id="viewer-type-badge" class="px-2.5 py-1 rounded-lg text-xs font-semibold uppercase tracking-wide shrink-0">NOTE</span>
-                    <div class="min-w-0">
-                        <h3 id="viewer-title" class="font-serif font-semibold text-lg sm:text-xl text-slate-900 truncate">Study Item Title</h3>
-                        <div class="flex items-center gap-2 text-xs text-slate-500">
-                            <span id="viewer-subject" class="font-medium text-indigo-700">Subject</span>
-                            <span>•</span>
-                            <span id="viewer-meta">Details</span>
-                        </div>
-                    </div>
+    <!-- Viewer Modal -->
+    <div id="viewer-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-3xl shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between">
+                <div>
+                    <span id="viewer-badge" class="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 uppercase">Notes</span>
+                    <h3 id="viewer-title" class="text-xl font-bold text-white mt-1">Item Title</h3>
                 </div>
-
-                <div class="flex items-center gap-2 shrink-0">
-                    <button type="button" id="viewer-fav-btn" class="p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 transition" title="Bookmark">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
-                    </button>
-                    <button type="button" id="viewer-delete-btn" class="p-2 rounded-xl border border-slate-200 bg-white hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-slate-500 transition" title="Delete Item (Password Protected)">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                    </button>
-                    <button type="button" id="close-viewer-btn" class="ml-1 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition">
-                        Close
-                    </button>
-                </div>
+                <button onclick="closeViewerModal()" class="text-slate-400 hover:text-white text-xl">&times;</button>
             </div>
-
-            <!-- Split-Pane Content -->
-            <div class="flex-1 flex flex-col lg:flex-row overflow-hidden">
-                <!-- Left Pane -->
-                <div class="flex-1 overflow-y-auto bg-white p-5 sm:p-8 flex flex-col">
-                    <!-- 1. NOTE VIEWER -->
-                    <div id="viewer-note-container" class="hidden flex-1 flex-col max-w-3xl mx-auto w-full">
-                        <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
-                            <div class="flex items-center gap-2 bg-slate-100 p-1 rounded-xl">
-                                <button type="button" id="btn-mode-read" class="px-3 py-1 rounded-lg text-xs font-semibold bg-white text-slate-900 shadow-2xs transition">Reader View</button>
-                                <button type="button" id="btn-mode-edit" class="px-3 py-1 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 transition">Edit Note</button>
-                            </div>
-                            <span id="note-word-count" class="text-xs text-slate-400 font-medium">0 words</span>
-                        </div>
-
-                        <div id="note-rendered-view" class="prose-academic flex-1"></div>
-
-                        <div id="note-pdf-view" class="hidden flex-1 flex-col min-h-[450px]">
-                            <iframe id="pdf-iframe" class="w-full flex-1 rounded-xl border border-slate-200" src=""></iframe>
-                        </div>
-
-                        <div id="note-editor-view" class="hidden flex-1 flex-col gap-3">
-                            <textarea id="note-edit-textarea" class="w-full flex-1 min-h-[340px] p-4 rounded-xl border border-slate-200 font-mono text-sm leading-relaxed focus:outline-none focus:border-indigo-500"></textarea>
-                            <div class="flex justify-end">
-                                <button type="button" id="save-edited-note-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-xl transition">
-                                    Save Changes
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 2. VIDEO PLAYER VIEWER -->
-                    <div id="viewer-video-container" class="hidden flex-1 flex-col justify-center max-w-4xl mx-auto w-full">
-                        <div id="native-video-wrapper" class="bg-slate-950 rounded-2xl overflow-hidden shadow-xl border border-slate-800">
-                            <video id="study-video-player" controls class="w-full max-h-[55vh] mx-auto bg-black" playsinline></video>
-                        </div>
-                        <div id="embed-video-wrapper" class="hidden bg-slate-950 rounded-2xl overflow-hidden shadow-xl border border-slate-800 aspect-video w-full">
-                            <iframe id="study-video-iframe" class="w-full h-full" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-
-                        <div id="native-video-controls-bar" class="mt-4 flex flex-wrap items-center justify-between gap-3 bg-slate-50 border border-slate-200 rounded-xl p-3.5">
-                            <div class="flex items-center gap-2">
-                                <span class="text-xs font-semibold text-slate-600">Speed:</span>
-                                <div class="inline-flex gap-1">
-                                    <button type="button" data-vspeed="1" class="v-speed-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-600 text-white">1x</button>
-                                    <button type="button" data-vspeed="1.25" class="v-speed-btn px-2.5 py-1 rounded-lg text-xs font-medium bg-white border border-slate-200 text-slate-700">1.25x</button>
-                                    <button type="button" data-vspeed="1.5" class="v-speed-btn px-2.5 py-1 rounded-lg text-xs font-medium bg-white border border-slate-200 text-slate-700">1.5x</button>
-                                    <button type="button" data-vspeed="2" class="v-speed-btn px-2.5 py-1 rounded-lg text-xs font-medium bg-white border border-slate-200 text-slate-700">2x</button>
-                                </div>
-                            </div>
-                            <button type="button" id="video-pin-ts-btn" class="text-xs font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-3 py-1.5 rounded-lg transition">
-                                + Pin Current Timestamp
-                            </button>
-                        </div>
-                        <p id="viewer-video-desc" class="mt-4 text-sm text-slate-600 leading-relaxed"></p>
-                    </div>
-
-                    <!-- 3. AUDIO LECTURE DECK -->
-                    <div id="viewer-audio-container" class="hidden flex-1 flex-col justify-center max-w-2xl mx-auto w-full">
-                        <div id="native-audio-wrapper" class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-indigo-900/50">
-                            <div class="flex items-center justify-between mb-6">
-                                <span class="px-3 py-1 rounded-full bg-white/10 text-indigo-200 text-xs font-medium">Audio Lecture Deck</span>
-                                <div id="audio-equalizer" class="flex items-end gap-1 h-6">
-                                    <span class="eq-bar-1 w-1 bg-emerald-400 rounded-full h-2"></span>
-                                    <span class="eq-bar-2 w-1 bg-indigo-400 rounded-full h-4"></span>
-                                    <span class="eq-bar-3 w-1 bg-emerald-400 rounded-full h-3"></span>
-                                    <span class="eq-bar-4 w-1 bg-amber-400 rounded-full h-5"></span>
-                                    <span class="eq-bar-5 w-1 bg-indigo-400 rounded-full h-2"></span>
-                                </div>
-                            </div>
-
-                            <h4 id="audio-deck-title" class="font-serif text-2xl font-semibold text-white mb-1">Lecture Recording</h4>
-                            <p id="audio-deck-subtitle" class="text-xs text-indigo-200/80 mb-6">Subject • Recorded Study Session</p>
-
-                            <audio id="study-audio-player" preload="metadata"></audio>
-
-                            <div class="mb-5">
-                                <input type="range" id="audio-seek-slider" min="0" max="100" value="0" class="w-full accent-emerald-400 h-1.5 bg-white/20 rounded-lg cursor-pointer">
-                                <div class="flex justify-between text-[11px] font-mono text-indigo-200 mt-1.5">
-                                    <span id="audio-current-time">00:00</span>
-                                    <span id="audio-total-duration">00:00</span>
-                                </div>
-                            </div>
-
-                            <div class="flex flex-wrap items-center justify-between gap-4 pt-2 border-t border-white/10">
-                                <div class="flex items-center gap-2.5">
-                                    <button type="button" id="audio-rw-btn" class="px-2.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition">-10s</button>
-                                    <button type="button" id="audio-play-pause-btn" class="px-5 py-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-lg transition">Play</button>
-                                    <button type="button" id="audio-ff-btn" class="px-2.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition">+15s</button>
-                                </div>
-
-                                <div class="flex items-center gap-1 bg-white/10 p-1 rounded-xl">
-                                    <button type="button" data-aspeed="1" class="a-speed-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-white text-slate-900">1x</button>
-                                    <button type="button" data-aspeed="1.25" class="a-speed-btn px-2.5 py-1 rounded-lg text-xs font-medium text-indigo-100">1.25x</button>
-                                    <button type="button" data-aspeed="1.5" class="a-speed-btn px-2.5 py-1 rounded-lg text-xs font-medium text-indigo-100">1.5x</button>
-                                    <button type="button" data-aspeed="2" class="a-speed-btn px-2.5 py-1 rounded-lg text-xs font-medium text-indigo-100">2x</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="embed-audio-wrapper" class="hidden rounded-2xl overflow-hidden border border-slate-200 shadow-md">
-                            <iframe id="study-audio-iframe" class="w-full h-44" src="" frameborder="0"></iframe>
-                        </div>
-
-                        <div class="mt-4 flex items-center justify-between bg-amber-50/80 border border-amber-200 rounded-xl p-3.5">
-                            <p id="viewer-audio-desc" class="text-xs text-slate-600 line-clamp-2"></p>
-                            <button type="button" id="audio-pin-ts-btn" class="shrink-0 ml-3 text-xs font-semibold text-amber-900 bg-amber-100 hover:bg-amber-200 px-3 py-1.5 rounded-lg transition">
-                                + Timestamp Note
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Pane: Quick Revision Scratchpad -->
-                <div class="w-full lg:w-96 bg-slatebg border-t lg:border-t-0 lg:border-l border-slate-200 flex flex-col shrink-0 h-72 lg:h-auto">
-                    <div class="px-4 py-3 border-b border-slate-200/80 bg-white/70 flex items-center justify-between">
-                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700">Quick Revision Scratchpad</h4>
-                        <button type="button" id="scratchpad-timestamp-btn" class="hidden text-[11px] font-semibold text-indigo-700 bg-indigo-50 px-2 py-1 rounded-md transition">
-                            + Timestamp
-                        </button>
-                    </div>
-                    <div class="p-3.5 flex-1 flex flex-col">
-                        <textarea id="scratchpad-textarea" placeholder="Jot down key takeaways, exam questions, or timestamped thoughts while studying..." class="w-full flex-1 bg-white rounded-xl border border-slate-200 p-3.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 resize-none leading-relaxed"></textarea>
-                        <div class="mt-2.5 flex items-center justify-between text-[11px] text-slate-400">
-                            <span class="text-emerald-700 font-medium">Auto-saved to item</span>
-                            <button type="button" id="copy-scratchpad-btn" class="text-slate-600 hover:text-indigo-700 font-semibold transition">Copy Notes</button>
-                        </div>
-                    </div>
-                </div>
+            <div id="viewer-body" class="flex-1 overflow-y-auto bg-slate-950 p-4 rounded-xl border border-slate-800 text-slate-300 text-sm custom-scrollbar"></div>
+            <div class="flex justify-between items-center pt-2">
+                <button onclick="deleteCurrentItem()" class="text-rose-400 hover:text-rose-300 text-xs font-semibold">Delete Material</button>
+                <button onclick="closeViewerModal()" class="px-4 py-2 rounded-xl text-sm bg-slate-800 text-slate-300">Close</button>
             </div>
         </div>
     </div>
 
     <script>
-    (function () {
-        'use strict';
-
-        // =====================================================================
-        // 1. CONSTANTS & STORAGE KEYS
-        // =====================================================================
-        const CREATOR_PASSWORD = 'JENIL';
-        const STORAGE_KEY_ITEMS = 'pixinic_studyvalt_items_v2';
-        const STORAGE_KEY_SUBJECTS = 'pixinic_studyvalt_subjects_v2';
-        const SESSION_KEY_UNLOCKED = 'pixinic_studyvalt_unlocked_v2';
-
-        let isAdminUnlocked = false;
-        try {
-            isAdminUnlocked = sessionStorage.getItem(SESSION_KEY_UNLOCKED) === 'true';
-        } catch (e) {
-            isAdminUnlocked = false;
-        }
-        let pendingProtectedAction = null;
-
-        // =====================================================================
-        // 2. SYNTHETIC WAV AUDIO GENERATOR FOR SAMPLE RECORDINGS
-        // =====================================================================
-        function createSampleAudioBlobUrl(durationSec, baseFreq) {
-            try {
-                const sampleRate = 22050;
-                const numSamples = sampleRate * durationSec;
-                const buffer = new ArrayBuffer(44 + numSamples * 2);
-                const view = new DataView(buffer);
-                const writeStr = (offset, str) => {
-                    for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
-                };
-                writeStr(0, 'RIFF');
-                view.setUint32(4, 36 + numSamples * 2, true);
-                writeStr(8, 'WAVE');
-                writeStr(12, 'fmt ');
-                view.setUint32(16, 16, true);
-                view.setUint16(20, 1, true);
-                view.setUint16(22, 1, true);
-                view.setUint32(24, sampleRate, true);
-                view.setUint32(28, sampleRate * 2, true);
-                view.setUint16(32, 2, true);
-                view.setUint16(34, 16, true);
-                writeStr(36, 'data');
-                view.setUint32(40, numSamples * 2, true);
-
-                const chords = [1, 1.25, 1.5, 1.125];
-                for (let i = 0; i < numSamples; i++) {
-                    const t = i / sampleRate;
-                    const freq = baseFreq * chords[Math.floor(t / 4.5) % chords.length];
-                    const env = Math.min(1, (t % 4.5) * 4) * Math.exp(-(t % 4.5) * 0.45);
-                    const sample = (Math.sin(2 * Math.PI * freq * t) * 0.4 + Math.sin(2 * Math.PI * freq * 1.5 * t) * 0.2) * env;
-                    view.setInt16(44 + i * 2, sample * 0x7FFF, true);
-                }
-                return URL.createObjectURL(new Blob([view], { type: 'audio/wav' }));
-            } catch (e) {
-                return '';
-            }
-        }
-
-        // =====================================================================
-        // 3. URL CONVERTERS (YOUTUBE & GOOGLE DRIVE EMBED SUPPORT)
-        // =====================================================================
-        function normalizeMediaSource(url) {
-            if (!url) return { kind: 'native', src: '' };
-            const trimmed = url.trim();
-
-            // YouTube watch, youtu.be, shorts, embed
-            const ytMatch = trimmed.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
-            if (ytMatch && ytMatch[1]) {
-                return { kind: 'iframe', src: `https://www.youtube.com/embed/${ytMatch[1]}` };
-            }
-
-            // Google Drive /file/d/ID/... or ?id=ID
-            const driveMatch = trimmed.match(/drive\.google\.com\/(?:file\/d\/|open\?id=)([A-Za-z0-9_-]+)/);
-            if (driveMatch && driveMatch[1]) {
-                return { kind: 'iframe', src: `https://drive.google.com/file/d/${driveMatch[1]}/preview` };
-            }
-
-            return { kind: 'native', src: trimmed };
-        }
-
-        // =====================================================================
-        // 4. DEFAULT DATA & STATE INITIALIZATION
-        // =====================================================================
-        const DEFAULT_SUBJECTS = [
-            { name: 'Biology', color: 'bg-emerald-500', description: 'Cell metabolism, genetics & neurobiology' },
-            { name: 'Chemistry', color: 'bg-amber-500', description: 'Organic reactions, thermodynamics & lab notes' },
-            { name: 'Computer Science', color: 'bg-indigo-500', description: 'Algorithms, data structures & operating systems' }
-        ];
-
-        const DEFAULT_ITEMS = [
-            {
-                id: 'item-1',
-                title: 'Data Structures: Binary Search Trees & Balancing',
-                subject: 'Computer Science',
-                type: 'note',
-                tags: ['algorithms', 'trees', 'midterm'],
-                date: 'Nov 14, 2026',
-                bookmarked: true,
-                content: '# Binary Search Trees (BST)\n\nA **Binary Search Tree** is a node-based binary tree data structure where each node satisfies the ordering property:\n\n- The **left subtree** contains only nodes with keys lesser than the node\'s key.\n- The **right subtree** contains only nodes with keys greater than the node\'s key.\n\n## Complexity Summary\n- Search: `O(log n)` average, `O(n)` skewed\n- Insert: `O(log n)` average, `O(n)` skewed\n\n> **Exam Tip:** Always check if the tree is self-balancing (AVL or Red-Black Tree) before assuming logarithmic worst-case bounds.',
-                scratchpad: 'Review AVL rotation cases (LL, RR, LR, RL) before Friday quiz.'
-            },
-            {
-                id: 'item-2',
-                title: 'Cellular Respiration & ATP Synthesis Walkthrough',
-                subject: 'Biology',
-                type: 'video',
-                tags: ['metabolism', 'mitochondria', 'lecture-08'],
-                date: 'Nov 12, 2026',
-                bookmarked: false,
-                duration: '00:15',
-                description: 'Visual breakdown of Glycolysis, the Krebs Cycle, and Oxidative Phosphorylation.',
-                mediaUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-                scratchpad: '[00:05] Net yield of glycolysis is 2 ATP and 2 NADH per glucose molecule.'
-            },
-            {
-                id: 'item-3',
-                title: 'Organic Chemistry: SN1 vs SN2 Reaction Mechanisms',
-                subject: 'Chemistry',
-                type: 'note',
-                tags: ['organic', 'nucleophiles', 'formulas'],
-                date: 'Nov 10, 2026',
-                bookmarked: true,
-                content: '# SN1 vs SN2 Substitution Mechanisms\n\n### 1. SN2 (Bimolecular)\n- **Kinetics:** Second-order (`Rate = k[Substrate][Nucleophile]`)\n- **Stereochemistry:** Complete Walden inversion\n- **Solvent:** Polar aprotic (DMSO, Acetone, DMF)\n\n### 2. SN1 (Unimolecular)\n- **Kinetics:** First-order via carbocation intermediate\n- **Stereochemistry:** Racemization (retention + inversion)',
-                scratchpad: 'Watch out for carbocation rearrangements in SN1!'
-            },
-            {
-                id: 'item-4',
-                title: 'Voice Memo: Neurotransmitters & Synaptic Plasticity',
-                subject: 'Biology',
-                type: 'audio',
-                tags: ['neuroscience', 'voice-note', 'revision'],
-                date: 'Nov 08, 2026',
-                bookmarked: false,
-                duration: '00:18',
-                description: 'Quick self-recorded summary comparing Glutamate and GABA receptor pathways.',
-                mediaUrl: '',
-                scratchpad: 'LTP relies heavily on NMDA receptor activation.'
-            }
-        ];
-
-        function loadSavedState() {
-            let subjects = [...DEFAULT_SUBJECTS];
-            let items = [...DEFAULT_ITEMS];
-            try {
-                const rawSubj = localStorage.getItem(STORAGE_KEY_SUBJECTS);
-                if (rawSubj) {
-                    const parsed = JSON.parse(rawSubj);
-                    if (Array.isArray(parsed) && parsed.length > 0) subjects = parsed;
-                }
-                const rawItems = localStorage.getItem(STORAGE_KEY_ITEMS);
-                if (rawItems) {
-                    const parsed = JSON.parse(rawItems);
-                    if (Array.isArray(parsed)) items = parsed;
-                }
-            } catch (e) {
-                console.warn('localStorage load warning:', e);
-            }
-
-            items.forEach((it, idx) => {
-                if (it.type === 'audio' && (!it.mediaUrl || it.mediaUrl.startsWith('blob:'))) {
-                    it.mediaUrl = createSampleAudioBlobUrl(18 + (idx % 5), 240 + idx * 25);
-                }
-            });
-            return { subjects, items };
-        }
-
-        const initialData = loadSavedState();
-        const state = {
-            subjects: initialData.subjects,
-            items: initialData.items,
-            selectedSubject: 'All',
-            selectedType: 'all',
-            searchQuery: '',
-            activeItemId: null
+        const defaultData = {
+            subjects: [
+                { id: 'cs', name: 'Computer Science', desc: 'Programming algorithms and data structures.' },
+                { id: 'bio', name: 'Biology', desc: 'Cellular biology and human physiology.' },
+                { id: 'chem', name: 'Chemistry', desc: 'Organic and physical chemistry.' }
+            ],
+            materials: [
+                { id: '1', subjectId: 'cs', type: 'notes', title: 'Python Basics Summary', content: 'Variables are containers for storing data values.\n\n- Integers\n- Strings\n- Floats' },
+                { id: '2', subjectId: 'cs', type: 'video', title: 'Binary Search Tree Walkthrough', content: 'https://www.youtube.com/watch?v=saBS0SyZCKg' },
+                { id: '3', subjectId: 'chem', type: 'audio', title: 'Periodic Table Audio Summary', content: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' }
+            ]
         };
 
-        let pendingFile = null;
-        let pendingFileUrl = null;
-        let pendingNoteIsPdf = false;
-        let mediaRecorder = null;
-        let recordedChunks = [];
-        let recTimerInterval = null;
-        let recSeconds = 0;
+        let appData = JSON.parse(localStorage.getItem('pixinic_studyvalt_data')) || defaultData;
+        let currentSubjectId = appData.subjects[0]?.id || 'cs';
+        let currentCategory = 'notes';
+        let isUnlocked = false;
+        let pendingAction = null;
+        let activeViewerItemId = null;
 
-        function persistVault() {
-            try {
-                localStorage.setItem(STORAGE_KEY_SUBJECTS, JSON.stringify(state.subjects));
-                const serializableItems = state.items.map(it => ({
-                    ...it,
-                    mediaUrl: (it.mediaUrl && it.mediaUrl.startsWith('blob:')) ? '' : it.mediaUrl,
-                    pdfUrl: (it.pdfUrl && it.pdfUrl.startsWith('blob:')) ? '' : it.pdfUrl
-                }));
-                localStorage.setItem(STORAGE_KEY_ITEMS, JSON.stringify(serializableItems));
-            } catch (e) {
-                showToast('Browser storage quota full — large files stay active for this session.', 'amber');
-            }
+        function saveAppData() {
+            localStorage.setItem('pixinic_studyvalt_data', JSON.stringify(appData));
         }
 
-        // =====================================================================
-        // 5. LIGHTWEIGHT BUILT-IN MARKDOWN PARSER (ZERO EXTERNAL DEPENDENCIES)
-        // =====================================================================
-        function renderMarkdownSafe(mdText) {
-            if (!mdText) return '';
-            let html = escapeHtml(mdText);
-            // Code blocks
-            html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-            // Inline code
-            html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-            // Headings
-            html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
-            html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
-            html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
-            // Blockquotes
-            html = html.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>');
-            // Bold & Italic
-            html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-            html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-            // Bullet list items
-            html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
-            html = html.replace(/(<li>.*<\/li>\n?)+/g, match => `<ul>${match}</ul>`);
-            // Line breaks into paragraphs
-            return html.split(/\n{2,}/).map(block => {
-                const b = block.trim();
-                if (!b) return '';
-                if (/^<(h1|h2|h3|ul|ol|pre|blockquote)/.test(b)) return b;
-                return `<p>${b.replace(/\n/g, '<br>')}</p>`;
-            }).join('');
-        }
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSubjects();
+            updateSubjectHeader();
+            renderItems();
+            document.getElementById('global-search').addEventListener('input', (e) => renderItems(e.target.value));
+        });
 
-        // =====================================================================
-        // 6. PASSWORD GUARD ("JENIL")
-        // =====================================================================
-        function requireAdminAuth(callback) {
-            if (isAdminUnlocked) {
-                callback();
-                return;
-            }
-            pendingProtectedAction = callback;
-            document.getElementById('admin-password-input').value = '';
-            document.getElementById('password-error-msg').classList.add('hidden');
-            openModal('password-modal');
-            setTimeout(() => document.getElementById('admin-password-input').focus(), 50);
-        }
-
-        function updateAdminStatusUI() {
-            const banner = document.getElementById('admin-status-banner');
-            const text = document.getElementById('admin-status-text');
-            const actionBtn = document.getElementById('admin-status-action');
-            const iconWrap = document.getElementById('admin-status-icon-wrap');
-
-            if (isAdminUnlocked) {
-                banner.className = 'mb-4 px-3 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-between text-xs';
-                text.textContent = 'Creator Unlocked';
-                text.className = 'text-emerald-800 font-semibold';
-                iconWrap.className = 'text-emerald-600';
-                actionBtn.textContent = 'Lock';
-                actionBtn.className = 'text-[11px] font-bold text-emerald-700 hover:underline px-1.5 py-0.5 rounded';
-                document.querySelectorAll('.admin-btn-lock').forEach(el => el.classList.add('hidden'));
-            } else {
-                banner.className = 'mb-4 px-3 py-2.5 rounded-xl bg-slate-100 border border-slate-200/90 flex items-center justify-between text-xs';
-                text.textContent = 'Upload Locked';
-                text.className = 'text-slate-700 font-medium';
-                iconWrap.className = 'text-amber-600';
-                actionBtn.textContent = 'Unlock';
-                actionBtn.className = 'text-[11px] font-bold text-indigo-700 hover:underline px-1.5 py-0.5 rounded';
-                document.querySelectorAll('.admin-btn-lock').forEach(el => el.classList.remove('hidden'));
-            }
-        }
-
-        // =====================================================================
-        // 7. SIDEBAR, STATS & CARDS RENDERING
-        // =====================================================================
-        function renderSidebar() {
-            const list = document.getElementById('subjects-list');
-            list.innerHTML = '';
-
-            state.subjects.forEach(subj => {
-                const count = state.items.filter(i => i.subject === subj.name).length;
-                const isSelected = state.selectedSubject === subj.name;
+        function renderSubjects() {
+            const listEl = document.getElementById('subject-list');
+            listEl.innerHTML = '';
+            appData.subjects.forEach(sub => {
+                const isActive = sub.id === currentSubjectId;
                 const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.dataset.subject = subj.name;
-                btn.className = `subject-nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition ${
-                    isSelected ? 'bg-indigo-50 text-indigo-800 font-semibold' : 'text-slate-600 hover:bg-slate-50'
-                }`;
-                btn.innerHTML = `
-                    <span class="flex items-center gap-2.5 truncate">
-                        <span class="w-2.5 h-2.5 rounded-full ${escapeHtml(subj.color)} shrink-0"></span>
-                        <span class="truncate">${escapeHtml(subj.name)}</span>
-                    </span>
-                    <span class="text-xs font-medium px-2 py-0.5 rounded-full ${
-                        isSelected ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-500'
-                    }">${count}</span>
-                `;
-                list.appendChild(btn);
+                btn.className = `w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium transition flex items-center justify-between ${isActive ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'text-slate-300 hover:bg-slate-800/60'}`;
+                btn.innerHTML = `<span>${sub.name}</span><span class="text-xs px-2 py-0.5 rounded-full ${isActive ? 'bg-cyan-500/20 text-cyan-300' : 'bg-slate-800 text-slate-400'}">${appData.materials.filter(m => m.subjectId === sub.id).length}</span>`;
+                btn.onclick = () => selectSubject(sub.id);
+                listEl.appendChild(btn);
             });
-
-            document.querySelectorAll('#library-nav .subject-nav-item').forEach(btn => {
-                const isMatch = btn.dataset.subject === state.selectedSubject;
-                btn.className = isMatch
-                    ? 'subject-nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold transition bg-indigo-50 text-indigo-800'
-                    : 'subject-nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition';
-            });
-
-            const uploadSelect = document.getElementById('upload-subject');
-            if (uploadSelect) {
-                uploadSelect.innerHTML = state.subjects
-                    .map(s => `<option value="${escapeHtml(s.name)}">${escapeHtml(s.name)}</option>`)
-                    .join('');
-            }
         }
 
-        function updateStats() {
-            const total = state.items.length;
-            const favs = state.items.filter(i => i.bookmarked).length;
-            const notes = state.items.filter(i => i.type === 'note').length;
-            const videos = state.items.filter(i => i.type === 'video').length;
-            const audios = state.items.filter(i => i.type === 'audio').length;
-
-            document.getElementById('count-all').textContent = total;
-            document.getElementById('count-fav').textContent = favs;
-            document.getElementById('total-items-badge').textContent = `${total} Item${total === 1 ? '' : 's'}`;
-            document.getElementById('stat-notes').textContent = notes;
-            document.getElementById('stat-videos').textContent = videos;
-            document.getElementById('stat-audio').textContent = audios;
+        function selectSubject(id) {
+            currentSubjectId = id;
+            renderSubjects();
+            updateSubjectHeader();
+            renderItems();
         }
 
-        function renderGrid() {
-            const grid = document.getElementById('materials-grid');
-            const emptyState = document.getElementById('empty-state');
+        function updateSubjectHeader() {
+            const sub = appData.subjects.find(s => s.id === currentSubjectId) || appData.subjects[0];
+            document.getElementById('current-subject-badge').innerText = sub.name;
+            document.getElementById('current-subject-title').innerText = sub.name;
+            document.getElementById('current-subject-desc').innerText = sub.desc;
+            document.getElementById('count-notes').innerText = appData.materials.filter(m => m.subjectId === sub.id && m.type === 'notes').length;
+            document.getElementById('count-video').innerText = appData.materials.filter(m => m.subjectId === sub.id && m.type === 'video').length;
+            document.getElementById('count-audio').innerText = appData.materials.filter(m => m.subjectId === sub.id && m.type === 'audio').length;
+        }
 
-            const subjectScopedItems = state.items.filter(item => {
-                if (state.selectedSubject === 'Favorites') return item.bookmarked;
-                if (state.selectedSubject !== 'All') return item.subject === state.selectedSubject;
-                return true;
+        function switchCategory(cat) {
+            currentCategory = cat;
+            ['notes', 'video', 'audio'].forEach(c => {
+                const btn = document.getElementById(`cat-${c}-btn`);
+                btn.className = c === cat ? "px-4 py-2 rounded-lg text-xs font-semibold bg-cyan-500 text-slate-950 shadow" : "px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white";
             });
+            renderItems();
+        }
 
-            document.getElementById('tab-count-note').textContent = subjectScopedItems.filter(i => i.type === 'note').length;
-            document.getElementById('tab-count-video').textContent = subjectScopedItems.filter(i => i.type === 'video').length;
-            document.getElementById('tab-count-audio').textContent = subjectScopedItems.filter(i => i.type === 'audio').length;
-            document.getElementById('tab-count-all').textContent = subjectScopedItems.length;
-
-            const filtered = subjectScopedItems.filter(item => {
-                if (state.selectedType !== 'all' && item.type !== state.selectedType) return false;
-                if (state.searchQuery.trim() !== '') {
-                    const q = state.searchQuery.toLowerCase();
-                    return (
-                        item.title.toLowerCase().includes(q) ||
-                        item.subject.toLowerCase().includes(q) ||
-                        (item.tags || []).some(t => t.toLowerCase().includes(q)) ||
-                        (item.content || item.description || '').toLowerCase().includes(q)
-                    );
-                }
-                return true;
-            });
-
-            const spaceBadge = document.getElementById('subject-space-badge');
-            const quickUploadLabel = document.getElementById('quick-upload-btn-label');
-            const deleteSubjBtn = document.getElementById('delete-subject-btn');
-
-            if (state.selectedSubject === 'All') {
-                spaceBadge.classList.add('hidden');
-                deleteSubjBtn.classList.add('hidden');
-                deleteSubjBtn.classList.remove('flex');
-                document.getElementById('current-view-title').textContent = 'Pixinic StudyValt — All Materials';
-                document.getElementById('current-view-subtitle').textContent = 'Select a subject tab on the left or switch between Notes, Video, and Audio below.';
-                quickUploadLabel.textContent = 'Upload Material';
-            } else if (state.selectedSubject === 'Favorites') {
-                spaceBadge.classList.add('hidden');
-                deleteSubjBtn.classList.add('hidden');
-                deleteSubjBtn.classList.remove('flex');
-                document.getElementById('current-view-title').textContent = 'Bookmarked Study Materials';
-                document.getElementById('current-view-subtitle').textContent = 'Your starred notes, videos, and audio recordings across all subjects.';
-                quickUploadLabel.textContent = 'Upload Material';
-            } else {
-                const subjObj = state.subjects.find(s => s.name === state.selectedSubject);
-                spaceBadge.classList.remove('hidden');
-                deleteSubjBtn.classList.remove('hidden');
-                deleteSubjBtn.classList.add('flex');
-                document.getElementById('current-view-title').textContent = state.selectedSubject;
-                document.getElementById('current-view-subtitle').textContent = (subjObj && subjObj.description)
-                    ? subjObj.description
-                    : `Dedicated study space for ${state.selectedSubject} — Notes, Video & Audio.`;
-                quickUploadLabel.textContent = `Upload to ${state.selectedSubject}`;
+        function renderItems(searchQuery = '') {
+            const gridEl = document.getElementById('items-grid');
+            gridEl.innerHTML = '';
+            let filtered = appData.materials.filter(m => m.subjectId === currentSubjectId && m.type === currentCategory);
+            if (searchQuery.trim() !== '') {
+                const q = searchQuery.toLowerCase();
+                filtered = appData.materials.filter(m => m.title.toLowerCase().includes(q) || m.content.toLowerCase().includes(q));
             }
-
-            document.getElementById('filtered-count-pill').textContent = filtered.length;
-
             if (filtered.length === 0) {
-                grid.innerHTML = '';
-                const typeLabel = state.selectedType === 'all' ? 'study materials' : `${state.selectedType} items`;
-                document.getElementById('empty-state-title').textContent = `No ${typeLabel} found here`;
-                document.getElementById('empty-state-desc').textContent =
-                    (state.selectedSubject !== 'All' && state.selectedSubject !== 'Favorites')
-                        ? `Click "Upload Study Material" to add ${typeLabel} directly into ${state.selectedSubject}.`
-                        : 'Try switching formats or upload a new note, lecture video, or audio recording.';
-                emptyState.classList.remove('hidden');
-                emptyState.classList.add('flex');
+                gridEl.innerHTML = `<div class="col-span-full py-12 text-center text-slate-500"><p class="text-sm font-medium">No ${currentCategory} found here yet.</p></div>`;
                 return;
             }
-
-            emptyState.classList.add('hidden');
-            emptyState.classList.remove('flex');
-            grid.innerHTML = '';
-
             filtered.forEach(item => {
-                const badge = getTypeBadgeConfig(item.type);
-                const snippet = item.type === 'note'
-                    ? stripMarkdown(item.content).slice(0, 130) + '...'
-                    : (item.description || 'Click to open and review in study workspace.');
-
-                const metaRight = item.type === 'note'
-                    ? `${countWords(item.content)} words`
-                    : (item.duration || 'Media');
-
-                const card = document.createElement('article');
-                card.dataset.openId = item.id;
-                card.className = 'group bg-white rounded-2xl border border-slate-200/90 hover:border-indigo-300 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between p-5 cursor-pointer';
-
+                const card = document.createElement('div');
+                card.className = "bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-2xl p-5 flex flex-col justify-between transition shadow-lg";
+                let preview = item.content.startsWith('data:') ? '[Uploaded File]' : item.content;
+                if (preview.length > 100) preview = preview.substring(0, 100) + '...';
                 card.innerHTML = `
                     <div>
-                        <div class="flex items-center justify-between gap-2 mb-3">
-                            <span class="px-2.5 py-1 rounded-lg text-[11px] font-semibold uppercase tracking-wide ${badge.classes}">
-                                ${badge.label}
-                            </span>
-                            <button type="button" data-fav-id="${item.id}" class="p-1.5 rounded-lg hover:bg-slate-100 transition ${item.bookmarked ? 'text-amber-500' : 'text-slate-300 hover:text-slate-500'}" title="Bookmark">
-                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="${item.bookmarked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>
-                            </button>
-                        </div>
-
-                        <h3 class="font-serif font-semibold text-lg text-slate-900 group-hover:text-indigo-800 transition leading-snug mb-2 line-clamp-2">
-                            ${escapeHtml(item.title)}
-                        </h3>
-                        <p class="text-xs text-slate-500 leading-relaxed line-clamp-3 mb-4">
-                            ${escapeHtml(snippet)}
-                        </p>
+                        <div class="flex items-center justify-between mb-3"><span class="text-xs px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 uppercase font-medium">${item.type}</span></div>
+                        <h4 class="font-bold text-white text-base mb-2">${item.title}</h4>
+                        <p class="text-xs text-slate-400 font-mono bg-slate-950 p-3 rounded-xl border border-slate-800 mb-4 line-clamp-3">${preview}</p>
                     </div>
-
-                    <div>
-                        <div class="flex flex-wrap gap-1.5 mb-3.5">
-                            ${(item.tags || []).slice(0, 3).map(t => `<span class="text-[11px] font-medium px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">#${escapeHtml(t)}</span>`).join('')}
-                        </div>
-                        <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
-                            <span class="font-semibold text-slate-600">${escapeHtml(item.subject)}</span>
-                            <span>${escapeHtml(metaRight)} • ${escapeHtml(item.date)}</span>
-                        </div>
-                    </div>
+                    <button onclick="openViewer('${item.id}')" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 py-2 rounded-xl text-xs font-semibold transition">Open & View</button>
                 `;
-                grid.appendChild(card);
+                gridEl.appendChild(card);
             });
         }
 
-        function getTypeBadgeConfig(type) {
-            if (type === 'video') return { label: 'Video', classes: 'bg-emerald-50 text-emerald-700 border border-emerald-200/70' };
-            if (type === 'audio') return { label: 'Audio', classes: 'bg-amber-50 text-amber-800 border border-amber-200/70' };
-            return { label: 'Note', classes: 'bg-indigo-50 text-indigo-700 border border-indigo-200/70' };
-        }
-
-        // =====================================================================
-        // 8. SUBJECT & FILTER ACTIONS
-        // =====================================================================
-        function selectSubject(subjectName) {
-            state.selectedSubject = subjectName;
-            renderSidebar();
-            renderGrid();
-            toggleMobileSidebar(false);
-        }
-
-        function setTypeFilter(type) {
-            state.selectedType = type;
-            document.querySelectorAll('.type-filter-btn').forEach(btn => {
-                const isActive = btn.dataset.type === type;
-                btn.className = isActive
-                    ? 'type-filter-btn px-4 py-2.5 rounded-t-xl border-b-2 border-indigo-700 bg-white text-indigo-900 text-xs sm:text-sm font-semibold transition flex items-center gap-2 shrink-0 shadow-2xs'
-                    : 'type-filter-btn px-4 py-2.5 rounded-t-xl border-b-2 border-transparent text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white/60 transition flex items-center gap-2 shrink-0';
-            });
-            renderGrid();
-        }
-
-        function deleteCurrentSubjectTab() {
-            const subjName = state.selectedSubject;
-            if (subjName === 'All' || subjName === 'Favorites') return;
-            state.subjects = state.subjects.filter(s => s.name !== subjName);
-            state.items = state.items.filter(i => i.subject !== subjName);
-            persistVault();
-            selectSubject('All');
-            updateStats();
-            showToast(`Deleted subject tab "${subjName}"`, 'slate');
-        }
-
-        function toggleFavorite(id) {
-            const item = state.items.find(i => i.id === id);
-            if (!item) return;
-            item.bookmarked = !item.bookmarked;
-            persistVault();
-            updateStats();
-            renderGrid();
-            if (state.activeItemId === id) {
-                updateViewerBookmarkIcon(item.bookmarked);
+        function checkPasswordState(action) {
+            pendingAction = action;
+            if (isUnlocked) { executePendingAction(); } else {
+                document.getElementById('password-input').value = '';
+                document.getElementById('password-error').classList.add('hidden');
+                document.getElementById('password-modal').classList.remove('hidden');
+                document.getElementById('password-modal').classList.add('flex');
             }
         }
 
-        // =====================================================================
-        // 9. UPLOAD MODAL & BROWSER AUDIO RECORDER
-        // =====================================================================
-        function openUploadModal() {
-            document.getElementById('upload-form').reset();
-            pendingFile = null;
-            pendingFileUrl = null;
-            pendingNoteIsPdf = false;
-            stopBrowserRecording(true);
-
-            document.getElementById('note-file-badge').classList.add('hidden');
-            document.getElementById('note-file-badge').classList.remove('flex');
-            document.getElementById('media-dropzone-placeholder').classList.remove('hidden');
-            document.getElementById('media-file-selected').classList.add('hidden');
-            document.getElementById('media-file-selected').classList.remove('flex');
-            document.getElementById('upload-new-subject').classList.add('hidden');
-            document.getElementById('inline-audio-recorder').classList.add('hidden');
-
-            const initialType = ['note', 'video', 'audio'].includes(state.selectedType) ? state.selectedType : 'note';
-            const radio = document.querySelector(`input[name="materialType"][value="${initialType}"]`);
-            if (radio) radio.checked = true;
-            switchUploadType(initialType);
-
-            if (state.selectedSubject !== 'All' && state.selectedSubject !== 'Favorites') {
-                document.getElementById('upload-subject').value = state.selectedSubject;
-            }
-            openModal('upload-modal');
+        function closePasswordModal() {
+            document.getElementById('password-modal').classList.remove('flex');
+            document.getElementById('password-modal').classList.add('hidden');
+            pendingAction = null;
         }
 
-        function switchUploadType(type) {
-            const noteSec = document.getElementById('note-input-section');
-            const mediaSec = document.getElementById('media-file-section');
-            const mediaInput = document.getElementById('media-file-input');
-            const mediaLabel = document.getElementById('media-file-label');
-            const mediaHint = document.getElementById('media-format-hint');
-            const recToggleBtn = document.getElementById('toggle-recorder-btn');
-            const mediaUrlLabel = document.getElementById('media-url-label');
-            const mediaUrlInput = document.getElementById('upload-media-url');
-
-            pendingFile = null;
-            pendingFileUrl = null;
-            document.getElementById('media-dropzone-placeholder').classList.remove('hidden');
-            document.getElementById('media-file-selected').classList.add('hidden');
-            document.getElementById('media-file-selected').classList.remove('flex');
-            document.getElementById('inline-audio-recorder').classList.add('hidden');
-
-            if (type === 'note') {
-                noteSec.classList.remove('hidden');
-                mediaSec.classList.add('hidden');
+        function verifyPassword() {
+            if (document.getElementById('password-input').value === 'JENIL') {
+                isUnlocked = true;
+                document.getElementById('lock-badge').innerText = 'Unlocked';
+                document.getElementById('lock-toggle-btn').innerText = 'Lock Now';
+                closePasswordModal();
+                executePendingAction();
             } else {
-                noteSec.classList.add('hidden');
-                mediaSec.classList.remove('hidden');
-                if (type === 'video') {
-                    mediaInput.accept = 'video/*';
-                    mediaLabel.textContent = 'Upload Video File (or use link below)';
-                    mediaHint.textContent = 'Supports MP4, WebM, MOV (Instant in-browser playback)';
-                    recToggleBtn.classList.add('hidden');
-                    recToggleBtn.classList.remove('flex');
-                    mediaUrlLabel.textContent = 'Or paste Video Link (YouTube, Google Drive, or direct .mp4 URL)';
-                    mediaUrlInput.placeholder = 'https://www.youtube.com/watch?v=... or Google Drive link';
-                } else {
-                    mediaInput.accept = 'audio/*';
-                    mediaLabel.textContent = 'Upload Audio File (or record / paste link)';
-                    mediaHint.textContent = 'Supports MP3, WAV, M4A, OGG';
-                    recToggleBtn.classList.remove('hidden');
-                    recToggleBtn.classList.add('flex');
-                    mediaUrlLabel.textContent = 'Or paste Audio Link (Google Drive share link or direct .mp3 URL)';
-                    mediaUrlInput.placeholder = 'https://drive.google.com/file/d/... or direct .mp3 link';
-                }
+                document.getElementById('password-error').classList.remove('hidden');
             }
         }
 
-        async function startBrowserRecording() {
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                showToast('Microphone recording is not supported in this browser.', 'amber');
-                return;
-            }
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                recordedChunks = [];
-                mediaRecorder = new MediaRecorder(stream);
+        function toggleLockState() {
+            isUnlocked = !isUnlocked;
+            document.getElementById('lock-badge').innerText = isUnlocked ? 'Unlocked' : 'Locked';
+            document.getElementById('lock-toggle-btn').innerText = isUnlocked ? 'Lock Now' : 'Unlock';
+        }
 
-                mediaRecorder.ondataavailable = e => {
-                    if (e.data.size > 0) recordedChunks.push(e.data);
+        function executePendingAction() {
+            if (pendingAction === 'create_tab') openCreateTabModal();
+            else if (pendingAction === 'upload') openUploadModalReal();
+            pendingAction = null;
+        }
+
+        function handleCreateTabClick() { checkPasswordState('create_tab'); }
+        function openCreateTabModal() {
+            document.getElementById('new-subject-name').value = '';
+            document.getElementById('new-subject-desc').value = '';
+            document.getElementById('create-tab-modal').classList.remove('hidden');
+            document.getElementById('create-tab-modal').classList.add('flex');
+        }
+        function closeCreateTabModal() {
+            document.getElementById('create-tab-modal').classList.remove('flex');
+            document.getElementById('create-tab-modal').classList.add('hidden');
+        }
+        function saveNewSubjectTab() {
+            const name = document.getElementById('new-subject-name').value.trim();
+            const desc = document.getElementById('new-subject-desc').value.trim();
+            if (!name) return alert('Enter subject name.');
+            const id = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+            appData.subjects.push({ id, name, desc: desc || 'Custom study space.' });
+            saveAppData();
+            closeCreateTabModal();
+            selectSubject(id);
+        }
+
+        function handleUploadClick() { checkPasswordState('upload'); }
+        function openUploadModalReal() {
+            const selectEl = document.getElementById('upload-subject-select');
+            selectEl.innerHTML = '';
+            appData.subjects.forEach(sub => {
+                const opt = document.createElement('option');
+                opt.value = sub.id;
+                opt.innerText = sub.name;
+                if (sub.id === currentSubjectId) opt.selected = true;
+                selectEl.appendChild(opt);
+            });
+            document.getElementById('upload-title').value = '';
+            document.getElementById('upload-content').value = '';
+            document.getElementById('upload-file-input').value = '';
+            document.getElementById('upload-modal').classList.remove('hidden');
+            document.getElementById('upload-modal').classList.add('flex');
+        }
+        function closeUploadModal() {
+            document.getElementById('upload-modal').classList.remove('flex');
+            document.getElementById('upload-modal').classList.add('hidden');
+        }
+
+        function submitUploadMaterial() {
+            const subjectId = document.getElementById('upload-subject-select').value;
+            const type = document.getElementById('upload-type-select').value;
+            const title = document.getElementById('upload-title').value.trim();
+            const textContent = document.getElementById('upload-content').value.trim();
+            const fileInput = document.getElementById('upload-file-input');
+
+            if (!title) return alert('Please enter a title.');
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    appData.materials.push({ id: Date.now().toString(), subjectId, type, title, content: e.target.result });
+                    saveAppData();
+                    closeUploadModal();
+                    selectSubject(subjectId);
+                    switchCategory(type);
                 };
-
-                mediaRecorder.onstop = () => {
-                    const blob = new Blob(recordedChunks, { type: 'audio/webm' });
-                    pendingFile = { name: `Voice-Note-${new Date().toLocaleTimeString().replace(/:/g, '-')}.webm`, size: blob.size };
-                    pendingFileUrl = URL.createObjectURL(blob);
-
-                    document.getElementById('selected-media-name').textContent = pendingFile.name;
-                    document.getElementById('selected-media-size').textContent = `${formatBytes(blob.size)} • Recorded audio ready`;
-                    document.getElementById('media-dropzone-placeholder').classList.add('hidden');
-                    document.getElementById('media-file-selected').classList.remove('hidden');
-                    document.getElementById('media-file-selected').classList.add('flex');
-                    stream.getTracks().forEach(t => t.stop());
-                    showToast('Voice recording attached!', 'emerald');
-                };
-
-                mediaRecorder.start();
-                recSeconds = 0;
-                document.getElementById('rec-timer').textContent = '00:00';
-                document.getElementById('rec-dot').className = 'w-2.5 h-2.5 rounded-full bg-rose-600 animate-ping';
-                document.getElementById('rec-status-text').textContent = 'Recording microphone...';
-                document.getElementById('btn-start-rec').disabled = true;
-                document.getElementById('btn-stop-rec').disabled = false;
-
-                recTimerInterval = setInterval(() => {
-                    recSeconds++;
-                    document.getElementById('rec-timer').textContent = formatTime(recSeconds);
-                }, 1000);
-            } catch (err) {
-                showToast('Microphone permission denied or unavailable.', 'amber');
+                reader.readAsDataURL(fileInput.files[0]);
+            } else if (textContent) {
+                appData.materials.push({ id: Date.now().toString(), subjectId, type, title, content: textContent });
+                saveAppData();
+                closeUploadModal();
+                selectSubject(subjectId);
+                switchCategory(type);
+            } else {
+                alert('Please enter text/URL or select a file to upload.');
             }
         }
 
-        function stopBrowserRecording(silent) {
-            if (recTimerInterval) {
-                clearInterval(recTimerInterval);
-                recTimerInterval = null;
-            }
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                mediaRecorder.stop();
-            }
-            const dot = document.getElementById('rec-dot');
-            if (dot) {
-                dot.className = 'w-2.5 h-2.5 rounded-full bg-slate-400';
-                document.getElementById('rec-status-text').textContent = silent ? 'Ready to record microphone audio' : 'Recording attached below';
-                document.getElementById('btn-start-rec').disabled = false;
-                document.getElementById('btn-stop-rec').disabled = true;
-            }
-        }
-
-        // =====================================================================
-        // 10. STUDY VIEWER & SPLIT-PANE WORKSPACE
-        // =====================================================================
         function openViewer(id) {
-            const item = state.items.find(i => i.id === id);
+            const item = appData.materials.find(m => m.id === id);
             if (!item) return;
-            state.activeItemId = id;
+            activeViewerItemId = id;
+            document.getElementById('viewer-badge').innerText = item.type;
+            document.getElementById('viewer-title').innerText = item.title;
+            const bodyEl = document.getElementById('viewer-body');
+            bodyEl.innerHTML = '';
 
-            const badge = getTypeBadgeConfig(item.type);
-            const badgeEl = document.getElementById('viewer-type-badge');
-            badgeEl.textContent = badge.label;
-            badgeEl.className = `px-2.5 py-1 rounded-lg text-xs font-semibold uppercase tracking-wide shrink-0 ${badge.classes}`;
-
-            document.getElementById('viewer-title').textContent = item.title;
-            document.getElementById('viewer-subject').textContent = item.subject;
-            updateViewerBookmarkIcon(item.bookmarked);
-            document.getElementById('scratchpad-textarea').value = item.scratchpad || '';
-
-            const tsBtn = document.getElementById('scratchpad-timestamp-btn');
-            const noteCont = document.getElementById('viewer-note-container');
-            const videoCont = document.getElementById('viewer-video-container');
-            const audioCont = document.getElementById('viewer-audio-container');
-            const videoEl = document.getElementById('study-video-player');
-            const audioEl = document.getElementById('study-audio-player');
-
-            videoEl.pause();
-            audioEl.pause();
-            document.getElementById('study-video-iframe').src = '';
-            document.getElementById('study-audio-iframe').src = '';
-            setAudioPlayingUI(false);
-
-            noteCont.classList.add('hidden');
-            videoCont.classList.add('hidden');
-            audioCont.classList.add('hidden');
-
-            if (item.type === 'note') {
-                tsBtn.classList.add('hidden');
-                noteCont.classList.remove('hidden');
-                noteCont.classList.add('flex');
-
-                if (item.isPdf && item.pdfUrl) {
-                    document.getElementById('viewer-meta').textContent = `PDF Document • ${item.date}`;
-                    document.getElementById('note-word-count').textContent = 'PDF Viewer';
-                    document.getElementById('note-rendered-view').classList.add('hidden');
-                    document.getElementById('note-editor-view').classList.add('hidden');
-                    document.getElementById('note-pdf-view').classList.remove('hidden');
-                    document.getElementById('note-pdf-view').classList.add('flex');
-                    document.getElementById('pdf-iframe').src = item.pdfUrl;
+            if (item.type === 'notes') {
+                if (item.content.startsWith('data:application/pdf')) {
+                    bodyEl.innerHTML = `<iframe src="${item.content}" class="w-full h-96 rounded-xl border border-slate-800"></iframe>`;
                 } else {
-                    document.getElementById('note-pdf-view').classList.add('hidden');
-                    const words = countWords(item.content);
-                    document.getElementById('viewer-meta').textContent = `${words} words • ${item.date}`;
-                    document.getElementById('note-word-count').textContent = `${words} words`;
-                    document.getElementById('note-rendered-view').innerHTML = renderMarkdownSafe(item.content || '');
-                    document.getElementById('note-edit-textarea').value = item.content || '';
-                    setNoteMode('read');
+                    bodyEl.innerHTML = `<div class="whitespace-pre-wrap font-sans leading-relaxed">${item.content}</div>`;
                 }
             } else if (item.type === 'video') {
-                videoCont.classList.remove('hidden');
-                videoCont.classList.add('flex');
-                document.getElementById('viewer-meta').textContent = `Video Lecture • ${item.date}`;
-                document.getElementById('viewer-video-desc').textContent = item.description || '';
+                let url = item.content;
+                if (url.includes('youtube.com/watch?v=')) url = url.replace('watch?v=', 'embed/');
+                else if (url.includes('youtu.be/')) url = url.replace('youtu.be/', 'www.youtube.com/embed/');
 
-                const source = normalizeMediaSource(item.mediaUrl);
-                if (source.kind === 'iframe') {
-                    tsBtn.classList.add('hidden');
-                    document.getElementById('native-video-wrapper').classList.add('hidden');
-                    document.getElementById('native-video-controls-bar').classList.add('hidden');
-                    document.getElementById('embed-video-wrapper').classList.remove('hidden');
-                    document.getElementById('study-video-iframe').src = source.src;
+                if (url.includes('youtube.com/embed') || url.startsWith('http')) {
+                    bodyEl.innerHTML = `<iframe src="${url}" class="w-full h-80 rounded-xl border border-slate-800" allowfullscreen></iframe>`;
                 } else {
-                    tsBtn.classList.remove('hidden');
-                    document.getElementById('embed-video-wrapper').classList.add('hidden');
-                    document.getElementById('native-video-wrapper').classList.remove('hidden');
-                    document.getElementById('native-video-controls-bar').classList.remove('hidden');
-                    videoEl.src = source.src;
-                    setMediaSpeed(1, 'video');
+                    bodyEl.innerHTML = `<video controls class="w-full h-80 rounded-xl bg-black"><source src="${item.content}"></video>`;
                 }
             } else if (item.type === 'audio') {
-                audioCont.classList.remove('hidden');
-                audioCont.classList.add('flex');
-                document.getElementById('viewer-meta').textContent = `Audio Recording • ${item.date}`;
-                document.getElementById('viewer-audio-desc').textContent = item.description || '';
-
-                const source = normalizeMediaSource(item.mediaUrl);
-                if (source.kind === 'iframe') {
-                    tsBtn.classList.add('hidden');
-                    document.getElementById('native-audio-wrapper').classList.add('hidden');
-                    document.getElementById('embed-audio-wrapper').classList.remove('hidden');
-                    document.getElementById('study-audio-iframe').src = source.src;
-                } else {
-                    tsBtn.classList.remove('hidden');
-                    document.getElementById('embed-audio-wrapper').classList.add('hidden');
-                    document.getElementById('native-audio-wrapper').classList.remove('hidden');
-                    document.getElementById('audio-deck-title').textContent = item.title;
-                    document.getElementById('audio-deck-subtitle').textContent = `${item.subject} • ${item.date}`;
-                    audioEl.src = source.src;
-                    document.getElementById('audio-seek-slider').value = 0;
-                    document.getElementById('audio-current-time').textContent = '00:00';
-                    setMediaSpeed(1, 'audio');
-                }
+                bodyEl.innerHTML = `
+                    <div class="p-6 flex flex-col items-center justify-center space-y-4">
+                        <p class="text-sm font-semibold text-white">${item.title}</p>
+                        <audio controls class="w-full max-w-md"><source src="${item.content}"></audio>
+                    </div>`;
             }
-
-            openModal('viewer-modal');
+            document.getElementById('viewer-modal').classList.remove('hidden');
+            document.getElementById('viewer-modal').classList.add('flex');
         }
 
         function closeViewerModal() {
-            document.getElementById('study-video-player').pause();
-            document.getElementById('study-audio-player').pause();
-            document.getElementById('study-video-iframe').src = '';
-            document.getElementById('study-audio-iframe').src = '';
-            setAudioPlayingUI(false);
-            closeModal('viewer-modal');
-            state.activeItemId = null;
+            document.getElementById('viewer-modal').classList.remove('flex');
+            document.getElementById('viewer-modal').classList.add('hidden');
+            activeViewerItemId = null;
         }
 
-        function setNoteMode(mode) {
-            const readView = document.getElementById('note-rendered-view');
-            const editView = document.getElementById('note-editor-view');
-            const btnRead = document.getElementById('btn-mode-read');
-            const btnEdit = document.getElementById('btn-mode-edit');
-            if (mode === 'read') {
-                readView.classList.remove('hidden');
-                editView.classList.add('hidden');
-                btnRead.className = 'px-3 py-1 rounded-lg text-xs font-semibold bg-white text-slate-900 shadow-2xs transition';
-                btnEdit.className = 'px-3 py-1 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 transition';
-            } else {
-                readView.classList.add('hidden');
-                editView.classList.remove('hidden');
-                editView.classList.add('flex');
-                btnEdit.className = 'px-3 py-1 rounded-lg text-xs font-semibold bg-white text-slate-900 shadow-2xs transition';
-                btnRead.className = 'px-3 py-1 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 transition';
+        function deleteCurrentItem() {
+            if (!activeViewerItemId) return;
+            if (confirm('Delete this material?')) {
+                appData.materials = appData.materials.filter(m => m.id !== activeViewerItemId);
+                saveAppData();
+                closeViewerModal();
+                updateSubjectHeader();
+                renderItems();
             }
         }
-
-        function setAudioPlayingUI(isPlaying) {
-            const btn = document.getElementById('audio-play-pause-btn');
-            const eq = document.getElementById('audio-equalizer');
-            btn.textContent = isPlaying ? 'Pause' : 'Play';
-            if (isPlaying) eq.classList.add('eq-playing');
-            else eq.classList.remove('eq-playing');
-        }
-
-        function setMediaSpeed(rate, kind) {
-            if (kind === 'video') {
-                document.getElementById('study-video-player').playbackRate = rate;
-                document.querySelectorAll('.v-speed-btn').forEach(btn => {
-                    btn.className = parseFloat(btn.dataset.vspeed) === rate
-                        ? 'v-speed-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-600 text-white'
-                        : 'v-speed-btn px-2.5 py-1 rounded-lg text-xs font-medium bg-white border border-slate-200 text-slate-700';
-                });
-            } else {
-                document.getElementById('study-audio-player').playbackRate = rate;
-                document.querySelectorAll('.a-speed-btn').forEach(btn => {
-                    btn.className = parseFloat(btn.dataset.aspeed) === rate
-                        ? 'a-speed-btn px-2.5 py-1 rounded-lg text-xs font-semibold bg-white text-slate-900'
-                        : 'a-speed-btn px-2.5 py-1 rounded-lg text-xs font-medium text-indigo-100';
-                });
-            }
-        }
-
-        function insertTimestampToScratchpad() {
-            const item = state.items.find(i => i.id === state.activeItemId);
-            if (!item) return;
-            const currentTime = item.type === 'video'
-                ? document.getElementById('study-video-player').currentTime
-                : document.getElementById('study-audio-player').currentTime;
-            const stamp = `[${formatTime(currentTime)}] `;
-            const area = document.getElementById('scratchpad-textarea');
-            const prefix = area.value && !area.value.endsWith('\n') ? '\n' : '';
-            area.value += prefix + stamp;
-            area.focus();
-            item.scratchpad = area.value;
-            persistVault();
-        }
-
-        function updateViewerBookmarkIcon(isBookmarked) {
-            const btn = document.getElementById('viewer-fav-btn');
-            btn.className = isBookmarked
-                ? 'p-2 rounded-xl border border-amber-200 bg-amber-50 text-amber-600 transition'
-                : 'p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 transition';
-        }
-
-        // =====================================================================
-        // 11. MODAL & SIDEBAR HELPERS
-        // =====================================================================
-        function openModal(id) {
-            const el = document.getElementById(id);
-            el.classList.remove('hidden');
-            el.classList.add('flex');
-        }
-
-        function closeModal(id) {
-            const el = document.getElementById(id);
-            el.classList.add('hidden');
-            el.classList.remove('flex');
-        }
-
-        function toggleMobileSidebar(open) {
-            const sidebar = document.getElementById('sidebar');
-            const backdrop = document.getElementById('sidebar-backdrop');
-            if (open) {
-                sidebar.classList.remove('-translate-x-full');
-                backdrop.classList.remove('hidden');
-            } else {
-                sidebar.classList.add('-translate-x-full');
-                backdrop.classList.add('hidden');
-            }
-        }
-
-        function showToast(message, tone) {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            const borderColors = {
-                emerald: 'border-emerald-400',
-                amber: 'border-amber-400',
-                indigo: 'border-indigo-400',
-                slate: 'border-slate-400'
-            };
-            toast.className = `pointer-events-auto bg-slate-900 text-white border-l-4 ${borderColors[tone] || 'border-indigo-400'} px-4 py-3 rounded-xl shadow-lg text-xs font-medium transition-all duration-300`;
-            toast.textContent = message;
-            container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 300);
-            }, 2800);
-        }
-
-        function formatTime(sec) {
-            if (!isFinite(sec) || sec < 0) return '00:00';
-            const m = Math.floor(sec / 60);
-            const s = Math.floor(sec % 60);
-            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-        }
-
-        function formatBytes(bytes) {
-            if (!bytes) return '0 B';
-            const sizes = ['B', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(1024));
-            return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
-        }
-
-        function countWords(str) {
-            return str ? str.trim().split(/\s+/).filter(Boolean).length : 0;
-        }
-
-        function stripMarkdown(md) {
-            return md ? md.replace(/[#*`>_~\-\[\]\(\)]/g, ' ').replace(/\s+/g, ' ').trim() : '';
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text == null ? '' : String(text);
-            return div.innerHTML;
-        }
-
-        // =====================================================================
-        // 12. CENTRAL EVENT LISTENERS & DELEGATION
-        // =====================================================================
-        document.addEventListener('DOMContentLoaded', () => {
-            updateAdminStatusUI();
-            renderSidebar();
-            updateStats();
-            renderGrid();
-
-            // Global delegated click handler for all data-action, subject, filter & card buttons
-            document.addEventListener('click', (e) => {
-                // Protected actions: Upload or + Create Tab
-                const actionBtn = e.target.closest('[data-action]');
-                if (actionBtn) {
-                    const action = actionBtn.dataset.action;
-                    if (action === 'upload') {
-                        requireAdminAuth(openUploadModal);
-                    } else if (action === 'create-tab') {
-                        requireAdminAuth(() => {
-                            document.getElementById('create-subject-name').value = '';
-                            document.getElementById('create-subject-desc').value = '';
-                            openModal('create-subject-modal');
-                            setTimeout(() => document.getElementById('create-subject-name').focus(), 50);
-                        });
-                    }
-                    return;
-                }
-
-                // Sidebar Subject Navigation
-                const subjBtn = e.target.closest('[data-subject]');
-                if (subjBtn) {
-                    selectSubject(subjBtn.dataset.subject);
-                    return;
-                }
-
-                // Media Type Sub-Tabs (Notes, Video, Audio, All Formats)
-                const typeBtn = e.target.closest('[data-type]');
-                if (typeBtn) {
-                    setTypeFilter(typeBtn.dataset.type);
-                    return;
-                }
-
-                // Bookmark Star on Card
-                const favBtn = e.target.closest('[data-fav-id]');
-                if (favBtn) {
-                    e.stopPropagation();
-                    toggleFavorite(favBtn.dataset.favId);
-                    return;
-                }
-
-                // Open Study Item Card
-                const card = e.target.closest('[data-open-id]');
-                if (card) {
-                    openViewer(card.dataset.openId);
-                    return;
-                }
-
-                // Video Speed Buttons
-                const vSpeedBtn = e.target.closest('[data-vspeed]');
-                if (vSpeedBtn) {
-                    setMediaSpeed(parseFloat(vSpeedBtn.dataset.vspeed), 'video');
-                    return;
-                }
-
-                // Audio Speed Buttons
-                const aSpeedBtn = e.target.closest('[data-aspeed]');
-                if (aSpeedBtn) {
-                    setMediaSpeed(parseFloat(aSpeedBtn.dataset.aspeed), 'audio');
-                    return;
-                }
-            });
-
-            // Mobile sidebar toggle
-            document.getElementById('mobile-menu-btn').addEventListener('click', () => toggleMobileSidebar(true));
-            document.getElementById('mobile-close-btn').addEventListener('click', () => toggleMobileSidebar(false));
-            document.getElementById('sidebar-backdrop').addEventListener('click', () => toggleMobileSidebar(false));
-
-            // Admin lock/unlock banner button
-            document.getElementById('admin-status-action').addEventListener('click', () => {
-                if (isAdminUnlocked) {
-                    isAdminUnlocked = false;
-                    try { sessionStorage.removeItem(SESSION_KEY_UNLOCKED); } catch (e) {}
-                    updateAdminStatusUI();
-                    showToast('Creator upload access locked', 'slate');
-                } else {
-                    requireAdminAuth(() => {});
-                }
-            });
-
-            // Delete current subject tab button
-            document.getElementById('delete-subject-btn').addEventListener('click', () => {
-                requireAdminAuth(deleteCurrentSubjectTab);
-            });
-
-            // Search input
-            document.getElementById('search-input').addEventListener('input', (e) => {
-                state.searchQuery = e.target.value;
-                renderGrid();
-            });
-
-            // Password Modal Form & Close
-            document.getElementById('password-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const entered = document.getElementById('admin-password-input').value;
-                const remember = document.getElementById('remember-session-checkbox').checked;
-                if (entered === CREATOR_PASSWORD) {
-                    if (remember) {
-                        isAdminUnlocked = true;
-                        try { sessionStorage.setItem(SESSION_KEY_UNLOCKED, 'true'); } catch (err) {}
-                    }
-                    updateAdminStatusUI();
-                    const fn = pendingProtectedAction;
-                    pendingProtectedAction = null;
-                    closeModal('password-modal');
-                    showToast('Creator access verified!', 'emerald');
-                    if (typeof fn === 'function') fn();
-                } else {
-                    document.getElementById('password-error-msg').classList.remove('hidden');
-                    document.getElementById('admin-password-input').select();
-                }
-            });
-            document.getElementById('close-password-btn').addEventListener('click', () => closeModal('password-modal'));
-            document.getElementById('cancel-password-btn').addEventListener('click', () => closeModal('password-modal'));
-
-            // Create Subject Modal Form & Close
-            document.getElementById('create-subject-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const name = document.getElementById('create-subject-name').value.trim();
-                const description = document.getElementById('create-subject-desc').value.trim();
-                const colorEl = document.querySelector('input[name="subjectColor"]:checked');
-                const color = colorEl ? colorEl.value : 'bg-indigo-500';
-                if (!name) return;
-
-                if (state.subjects.some(s => s.name.toLowerCase() === name.toLowerCase())) {
-                    showToast(`Subject tab "${name}" already exists!`, 'amber');
-                    return;
-                }
-
-                state.subjects.push({
-                    name,
-                    color,
-                    description: description || `Dedicated study space for ${name} — Notes, Video & Audio.`
-                });
-                persistVault();
-                closeModal('create-subject-modal');
-                renderSidebar();
-                selectSubject(name);
-                showToast(`Created subject tab "${name}"!`, 'emerald');
-            });
-            document.getElementById('close-create-subject-btn').addEventListener('click', () => closeModal('create-subject-modal'));
-            document.getElementById('cancel-create-subject-btn').addEventListener('click', () => closeModal('create-subject-modal'));
-
-            // Upload Modal Controls
-            document.getElementById('close-upload-btn').addEventListener('click', () => {
-                stopBrowserRecording(true);
-                closeModal('upload-modal');
-            });
-            document.getElementById('cancel-upload-btn').addEventListener('click', () => {
-                stopBrowserRecording(true);
-                closeModal('upload-modal');
-            });
-            document.getElementById('toggle-inline-subject-btn').addEventListener('click', () => {
-                const inp = document.getElementById('upload-new-subject');
-                inp.classList.toggle('hidden');
-                if (!inp.classList.contains('hidden')) inp.focus();
-            });
-
-            document.querySelectorAll('input[name="materialType"]').forEach(radio => {
-                radio.addEventListener('change', (e) => switchUploadType(e.target.value));
-            });
-
-            // Note File Import
-            document.getElementById('note-file-input').addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                const titleInput = document.getElementById('upload-title');
-                if (!titleInput.value.trim()) titleInput.value = file.name.replace(/\.[^/.]+$/, '');
-
-                const badge = document.getElementById('note-file-badge');
-                document.getElementById('note-file-name').textContent = `${file.name} (${formatBytes(file.size)})`;
-                badge.classList.remove('hidden');
-                badge.classList.add('flex');
-
-                if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
-                    pendingNoteIsPdf = true;
-                    pendingFileUrl = URL.createObjectURL(file);
-                    document.getElementById('upload-note-content').value = `[PDF Document Attached: ${file.name}]`;
-                } else {
-                    pendingNoteIsPdf = false;
-                    const reader = new FileReader();
-                    reader.onload = ev => { document.getElementById('upload-note-content').value = ev.target.result; };
-                    reader.readAsText(file);
-                }
-            });
-
-            document.getElementById('clear-note-file-btn').addEventListener('click', () => {
-                document.getElementById('note-file-input').value = '';
-                document.getElementById('note-file-badge').classList.add('hidden');
-                document.getElementById('note-file-badge').classList.remove('flex');
-                pendingNoteIsPdf = false;
-                pendingFileUrl = null;
-            });
-
-            // Media Dropzone & File Input
-            document.getElementById('media-dropzone-box').addEventListener('click', () => {
-                document.getElementById('media-file-input').click();
-            });
-            document.getElementById('media-file-input').addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                pendingFile = file;
-                pendingFileUrl = URL.createObjectURL(file);
-                const titleInput = document.getElementById('upload-title');
-                if (!titleInput.value.trim()) titleInput.value = file.name.replace(/\.[^/.]+$/, '');
-
-                document.getElementById('selected-media-name').textContent = file.name;
-                document.getElementById('selected-media-size').textContent = `${formatBytes(file.size)} • Ready for instant playback`;
-                document.getElementById('media-dropzone-placeholder').classList.add('hidden');
-                document.getElementById('media-file-selected').classList.remove('hidden');
-                document.getElementById('media-file-selected').classList.add('flex');
-            });
-
-            // Inline Audio Recorder Controls
-            document.getElementById('toggle-recorder-btn').addEventListener('click', () => {
-                document.getElementById('inline-audio-recorder').classList.toggle('hidden');
-            });
-            document.getElementById('btn-start-rec').addEventListener('click', startBrowserRecording);
-            document.getElementById('btn-stop-rec').addEventListener('click', () => stopBrowserRecording(false));
-
-            // Upload Form Submit
-            document.getElementById('upload-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const type = document.querySelector('input[name="materialType"]:checked').value;
-                const title = document.getElementById('upload-title').value.trim();
-                const newSubjInput = document.getElementById('upload-new-subject');
-                let subject = document.getElementById('upload-subject').value;
-
-                if (!newSubjInput.classList.contains('hidden') && newSubjInput.value.trim()) {
-                    subject = newSubjInput.value.trim();
-                    if (!state.subjects.some(s => s.name.toLowerCase() === subject.toLowerCase())) {
-                        state.subjects.push({
-                            name: subject,
-                            color: 'bg-indigo-500',
-                            description: `Dedicated study space for ${subject} — Notes, Video & Audio.`
-                        });
-                    }
-                }
-
-                const tags = document.getElementById('upload-tags').value
-                    .split(',').map(t => t.trim().replace(/^#/, '')).filter(Boolean);
-                if (tags.length === 0) tags.push('pixinic-vault');
-
-                const todayStr = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
-
-                if (type === 'note') {
-                    const content = document.getElementById('upload-note-content').value.trim();
-                    if (!content && !pendingNoteIsPdf) {
-                        showToast('Please write some note content or import a file.', 'amber');
-                        return;
-                    }
-                    const newItem = {
-                        id: 'item-' + Date.now(),
-                        title,
-                        subject,
-                        type: 'note',
-                        tags,
-                        date: todayStr,
-                        bookmarked: false,
-                        isPdf: pendingNoteIsPdf,
-                        pdfUrl: pendingNoteIsPdf ? pendingFileUrl : null,
-                        content: content || 'Uploaded PDF Document',
-                        scratchpad: ''
-                    };
-                    state.items.unshift(newItem);
-                    persistVault();
-                    closeModal('upload-modal');
-                    state.selectedSubject = subject;
-                    setTypeFilter('note');
-                    renderSidebar();
-                    updateStats();
-                    renderGrid();
-                    showToast(`Saved note to ${subject}!`, 'emerald');
-                } else {
-                    const externalUrl = document.getElementById('upload-media-url').value.trim();
-                    const finalMediaUrl = pendingFileUrl || externalUrl;
-                    if (!finalMediaUrl) {
-                        showToast(`Please choose a local ${type} file or paste a link.`, 'amber');
-                        return;
-                    }
-                    const desc = document.getElementById('upload-media-desc').value.trim();
-                    const newItem = {
-                        id: 'item-' + Date.now(),
-                        title,
-                        subject,
-                        type,
-                        tags,
-                        date: todayStr,
-                        bookmarked: false,
-                        duration: pendingFile ? 'Local File' : 'External Link',
-                        description: desc || (pendingFile ? `Uploaded ${type} (${pendingFile.name})` : `Linked ${type} resource`),
-                        mediaUrl: finalMediaUrl,
-                        scratchpad: ''
-                    };
-                    state.items.unshift(newItem);
-                    persistVault();
-                    closeModal('upload-modal');
-                    state.selectedSubject = subject;
-                    setTypeFilter(type);
-                    renderSidebar();
-                    updateStats();
-                    renderGrid();
-                    showToast(`Saved ${type} to ${subject}!`, 'emerald');
-                }
-            });
-
-            // Viewer Modal Controls
-            document.getElementById('close-viewer-btn').addEventListener('click', closeViewerModal);
-            document.getElementById('viewer-fav-btn').addEventListener('click', () => {
-                if (state.activeItemId) toggleFavorite(state.activeItemId);
-            });
-            document.getElementById('viewer-delete-btn').addEventListener('click', () => {
-                requireAdminAuth(() => {
-                    if (!state.activeItemId) return;
-                    const idx = state.items.findIndex(i => i.id === state.activeItemId);
-                    if (idx === -1) return;
-                    const title = state.items[idx].title;
-                    state.items.splice(idx, 1);
-                    persistVault();
-                    closeViewerModal();
-                    renderSidebar();
-                    updateStats();
-                    renderGrid();
-                    showToast(`Deleted "${title}"`, 'slate');
-                });
-            });
-
-            document.getElementById('btn-mode-read').addEventListener('click', () => setNoteMode('read'));
-            document.getElementById('btn-mode-edit').addEventListener('click', () => setNoteMode('edit'));
-            document.getElementById('save-edited-note-btn').addEventListener('click', () => {
-                const item = state.items.find(i => i.id === state.activeItemId);
-                if (!item) return;
-                item.content = document.getElementById('note-edit-textarea').value;
-                persistVault();
-                document.getElementById('note-rendered-view').innerHTML = renderMarkdownSafe(item.content);
-                const words = countWords(item.content);
-                document.getElementById('note-word-count').textContent = `${words} words`;
-                document.getElementById('viewer-meta').textContent = `${words} words • ${item.date}`;
-                setNoteMode('read');
-                renderGrid();
-                showToast('Study note updated!', 'emerald');
-            });
-
-            // Audio Deck Controls
-            const audioEl = document.getElementById('study-audio-player');
-            audioEl.addEventListener('timeupdate', () => {
-                const slider = document.getElementById('audio-seek-slider');
-                if (audioEl.duration) {
-                    slider.value = (audioEl.currentTime / audioEl.duration) * 100;
-                    document.getElementById('audio-current-time').textContent = formatTime(audioEl.currentTime);
-                }
-            });
-            audioEl.addEventListener('loadedmetadata', () => {
-                document.getElementById('audio-total-duration').textContent = formatTime(audioEl.duration);
-            });
-            audioEl.addEventListener('ended', () => setAudioPlayingUI(false));
-
-            document.getElementById('audio-play-pause-btn').addEventListener('click', () => {
-                if (audioEl.paused) {
-                    audioEl.play();
-                    setAudioPlayingUI(true);
-                } else {
-                    audioEl.pause();
-                    setAudioPlayingUI(false);
-                }
-            });
-            document.getElementById('audio-seek-slider').addEventListener('input', (e) => {
-                if (audioEl.duration) audioEl.currentTime = (e.target.value / 100) * audioEl.duration;
-            });
-            document.getElementById('audio-rw-btn').addEventListener('click', () => {
-                if (audioEl.duration) audioEl.currentTime = Math.max(0, audioEl.currentTime - 10);
-            });
-            document.getElementById('audio-ff-btn').addEventListener('click', () => {
-                if (audioEl.duration) audioEl.currentTime = Math.min(audioEl.duration, audioEl.currentTime + 15);
-            });
-
-            // Scratchpad & Timestamp Buttons
-            document.getElementById('scratchpad-textarea').addEventListener('input', (e) => {
-                const item = state.items.find(i => i.id === state.activeItemId);
-                if (!item) return;
-                item.scratchpad = e.target.value;
-                persistVault();
-            });
-            document.getElementById('video-pin-ts-btn').addEventListener('click', insertTimestampToScratchpad);
-            document.getElementById('audio-pin-ts-btn').addEventListener('click', insertTimestampToScratchpad);
-            document.getElementById('scratchpad-timestamp-btn').addEventListener('click', insertTimestampToScratchpad);
-            document.getElementById('copy-scratchpad-btn').addEventListener('click', () => {
-                const area = document.getElementById('scratchpad-textarea');
-                if (!area.value.trim()) {
-                    showToast('Scratchpad is empty', 'amber');
-                    return;
-                }
-                area.select();
-                document.execCommand('copy');
-                window.getSelection().removeAllRanges();
-                showToast('Revision notes copied!', 'emerald');
-            });
-        });
-    })();
     </script>
 </body>
 </html>
