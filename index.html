@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pixinic StudyValt</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Firebase SDKs (Optional Cloud Sync) -->
+    <!-- Firebase SDKs for Cloud Sync -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <style>
@@ -246,17 +246,30 @@ const analytics = getAnalytics(app);
             ]
         };
 
-        let appData = JSON.parse(localStorage.getItem('pixinic_studyvalt_data')) || defaultData;
-        let currentSubjectId = appData.subjects[0]?.id || 'cs';
+        let appData = defaultData;
+        try {
+            const saved = localStorage.getItem('pixinic_studyvalt_data');
+            if (saved) {
+                appData = JSON.parse(saved);
+            }
+        } catch (e) {
+            console.error("Storage load error:", e);
+        }
+
+        let currentSubjectId = appData.subjects && appData.subjects[0] ? appData.subjects[0].id : 'cs';
         let currentCategory = 'notes';
         let isUnlocked = false;
         let pendingAction = null;
         let activeViewerItemId = null;
 
         function saveData() {
-            localStorage.setItem('pixinic_studyvalt_data', JSON.stringify(appData));
-            if (useCloud && db) {
-                db.collection('studyvalt').doc('main_data').set(appData).catch(err => console.error(err));
+            try {
+                localStorage.setItem('pixinic_studyvalt_data', JSON.stringify(appData));
+                if (useCloud && db) {
+                    db.collection('studyvalt').doc('main_data').set(appData).catch(err => console.error(err));
+                }
+            } catch (e) {
+                console.error("Storage save error:", e);
             }
         }
 
@@ -333,7 +346,7 @@ const analytics = getAnalytics(app);
             if (!gridEl) return;
             gridEl.innerHTML = '';
             let filtered = appData.materials.filter(m => m.subjectId === currentSubjectId && m.type === currentCategory);
-            if (searchQuery.trim() !== '') {
+            if (searchQuery && searchQuery.trim() !== '') {
                 const q = searchQuery.toLowerCase();
                 filtered = appData.materials.filter(m => m.title.toLowerCase().includes(q) || m.content.toLowerCase().includes(q));
             }
@@ -427,6 +440,7 @@ const analytics = getAnalytics(app);
         function openUploadModalReal() {
             const selectEl = document.getElementById('upload-subject-select');
             selectEl.innerHTML = '';
+            appData.subjects = appData.subjects || [];
             appData.subjects.forEach(sub => {
                 const opt = document.createElement('option');
                 opt.value = sub.id;
